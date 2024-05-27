@@ -1,0 +1,40 @@
+const path = require("path");
+
+module.exports = {
+  'config': path.resolve("dist", "config", "config.js"),
+  'migrations-path': path.resolve("dist", "migrations"),
+  'seeders-path': path.resolve("dist", "seeders"),
+  'models-path': path.resolve("dist", "models"),
+}
+
+/*
+
+generate a migration file with a given name:
+->1.sequelize migration:create --name add-some-table
+
+->2.move the generated file to src/migrations and change its extension to .ts
+->3.replace the content of the file with some kind of a migration Typescript-template:
+->
+**
+  import { QueryInterface, DataTypes, QueryTypes } from 'sequelize';
+
+  /** @type {import("sequelize-cli").Migration} */
+/*
+module.exports = {
+  up: (queryInterface: QueryInterface): Promise<void> => queryInterface.sequelize.transaction(
+    async (transaction) => {
+      // here go all migration changes
+    }
+  ),
+
+  down: (queryInterface: QueryInterface): Promise<void> => queryInterface.sequelize.transaction(
+    async (transaction) => {
+      // here go all migration undo changes
+    }
+  )
+};
+/*
+**
+
+->4.add necessary changes to the migration file
+*/

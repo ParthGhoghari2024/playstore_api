@@ -1,0 +1,40 @@
+{
+  "name": "prac1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "copyAssets": "npx ts-node ./src/utils/copyAssets.ts",
+    "build": "npx tsc -w & npm run copyAssets",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
+    "predev_old": "npm run build",
+    "dev_old": "  nodemon dist/index.js ",
+    "predev": "npm run build",
+    "dev": "nodemon dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.11",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0",
+    "rimraf": "^5.0.7",
+    "sequelize": "^6.32.1",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/sequelize": "^4.28.20",
+    "nodemon": "^3.1.0",
+    "sequelize-cli": "^6.6.2"
+  }
+}
