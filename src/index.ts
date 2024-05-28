@@ -25,12 +25,14 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 
 import userRoute from "./routes/userRoutes";
+import categoryRoute from "./routes/categoryRoutes";
 import { ICorsOptions } from "./types/config";
 app.use("/user", userRoute);
-
+app.use("/category", categoryRoute);
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello ts node");
 });
+
 const port: string = process.env.PORT as string;
 app.listen(port, () => {
   console.log(`Server is up and running on port ${port}`);

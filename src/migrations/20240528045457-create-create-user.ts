@@ -3,7 +3,7 @@ import { DataTypes, QueryInterface, Sequelize } from "sequelize";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
-    await queryInterface.createTable("UserModels", {
+    await queryInterface.createTable("users", {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -30,8 +30,32 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
+    await queryInterface.createTable("roles", {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      role: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      deletedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
   },
   async down(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
-    await queryInterface.dropTable("UserModels");
+    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("roles");
   },
 };

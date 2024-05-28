@@ -13,7 +13,7 @@ const logger: Logger = pino({
       {
         level: "trace",
         target: "pino/file",
-        options: { destination: "logs.log", colorize: true },
+        options: { destination: "./logs.log", colorize: true },
       },
     ],
   },

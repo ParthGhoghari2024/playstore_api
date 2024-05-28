@@ -1,18 +1,19 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-interface UserAttributes {
+interface CategoryAttributes {
   id?: number;
-  name: string;
-  email: string;
+  category: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataTypes: any) => {
-  class UserModel extends Model<UserAttributes> implements UserAttributes {
+module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
+  class CategoryModel
+    extends Model<CategoryAttributes>
+    implements CategoryAttributes
+  {
     public id!: number;
-    public name!: string;
-    public email!: string;
+    public category!: string;
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -20,29 +21,25 @@ module.exports = (sequelize: Sequelize, DataTypes: any) => {
     public readonly deletedAt!: Date;
   }
 
-  UserModel.init(
+  CategoryModel.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataType.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
-        type: DataTypes.STRING(30),
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING(30),
+      category: {
+        type: DataType.STRING(255),
         allowNull: false,
       },
     },
     {
       timestamps: true,
       paranoid: true,
-      tableName: "users",
+      tableName: "categories",
       sequelize,
     }
   );
 
-  return UserModel;
+  return CategoryModel;
 };

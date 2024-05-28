@@ -9,7 +9,7 @@ const run = (): void => {
   const distDirViews: string = "./dist/views";
   const filter = (file: string) => {
     // get the file extension
-    const ext = path.extname(file);
+    const ext: string = path.extname(file);
 
     // return true if the file is not a .txt or .xml file
     return ext !== ".ts";
