@@ -26,9 +26,12 @@ app.use(express.static("public"));
 
 import userRoute from "./routes/userRoutes";
 import categoryRoute from "./routes/categoryRoutes";
+import genreRoute from "./routes/genreRoutes";
 import { ICorsOptions } from "./types/config";
 app.use("/user", userRoute);
 app.use("/category", categoryRoute);
+app.use("/genre", genreRoute);
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello ts node");
 });

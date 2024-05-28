@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-interface UserAttributes {
+export interface IUserAttributes {
   id?: number;
   name: string;
   email: string;
@@ -10,7 +10,7 @@ interface UserAttributes {
   deletedAt?: Date;
 }
 module.exports = (sequelize: Sequelize, DataTypes: any) => {
-  class UserModel extends Model<UserAttributes> implements UserAttributes {
+  class UserModel extends Model<IUserAttributes> implements IUserAttributes {
     public id!: number;
     public name!: string;
     public email!: string;

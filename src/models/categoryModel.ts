@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-interface CategoryAttributes {
+export interface ICategoryAttributes {
   id?: number;
   category: string;
   createdAt?: Date;
@@ -9,8 +9,8 @@ interface CategoryAttributes {
 }
 module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
   class CategoryModel
-    extends Model<CategoryAttributes>
-    implements CategoryAttributes
+    extends Model<ICategoryAttributes>
+    implements ICategoryAttributes
   {
     public id!: number;
     public category!: string;

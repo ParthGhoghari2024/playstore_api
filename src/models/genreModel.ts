@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-interface GenreAttributes {
+export interface IGenreAttributes {
   id?: number;
   genre: string;
   categoryId: number;
@@ -9,7 +9,7 @@ interface GenreAttributes {
   deletedAt?: Date;
 }
 module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class GenreModel extends Model<GenreAttributes> implements GenreAttributes {
+  class GenreModel extends Model<IGenreAttributes> implements IGenreAttributes {
     public id!: number;
     public genre!: string;
     public categoryId!: number;

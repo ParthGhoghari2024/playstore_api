@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import db from "../models";
 import { logger } from "../utils/pino";
 import { IUser } from "../types/user";
+import { IUserAttributes } from "../models/userModel";
 interface IError extends Error {
   parent: {
     sqlMessage: string;
@@ -15,11 +16,10 @@ const getAllUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const users = await db.UserModel.findAll({
+    const users: IUserAttributes[] = await db.UserModel.findAll({
       attributes: ["id", "name2", "email", "createdAt", "updatedAt"],
       raw: true,
     });
-    console.log(users);
 
     res.json({ success: 1, result: users });
   } catch (error: unknown) {
@@ -37,7 +37,7 @@ const createUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const roleId = 3;
+    const roleId: number = 1; //TODO:
     const newUser: IUser = {
       name: req.body.name,
       email: req.body.email,
@@ -58,7 +58,7 @@ const deleteUserController = async (
 ): Promise<void> => {
   try {
     const userId: number = req.body.userId;
-    const deleteUserResult = await db.UserModel.destroy({
+    await db.UserModel.destroy({
       where: {
         id: userId,
       },
