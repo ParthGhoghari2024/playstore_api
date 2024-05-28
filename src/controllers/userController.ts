@@ -37,7 +37,7 @@ const createUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const roleId = 1;
+    const roleId = 3;
     const newUser: IUser = {
       name: req.body.name,
       email: req.body.email,

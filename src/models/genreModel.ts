@@ -34,12 +34,16 @@ module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
       categoryId: {
         type: DataType.INTEGER,
         allowNull: false,
+        references: {
+          model: "UserModel",
+          key: "id",
+        },
       },
     },
     {
       timestamps: true,
       paranoid: true,
-      tableName: "categories",
+      tableName: "genres",
       sequelize,
     }
   );

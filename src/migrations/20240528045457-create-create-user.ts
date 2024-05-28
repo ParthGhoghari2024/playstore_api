@@ -2,7 +2,33 @@ import { DataTypes, QueryInterface, Sequelize } from "sequelize";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
+  async up(queryInterface: QueryInterface, DataType: typeof DataTypes) {
+    await queryInterface.createTable("roles", {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      role: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+      },
+      createdAt: {
+        allowNull: false,
+        type: "timestamp",
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
+      updatedAt: {
+        allowNull: false,
+        type: "timestamp",
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
+      deletedAt: {
+        allowNull: true,
+        type: "timestamp",
+        defaultValue: null,
+      },
+    });
     await queryInterface.createTable("users", {
       id: {
         type: DataTypes.INTEGER,
@@ -17,40 +43,28 @@ module.exports = {
         type: DataTypes.STRING(30),
         allowNull: false,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      deletedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-    });
-    await queryInterface.createTable("roles", {
-      id: {
+      roleId: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      role: {
-        type: DataTypes.STRING(30),
         allowNull: false,
+        references: {
+          model: "roles",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: "timestamp",
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: "timestamp",
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       deletedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+        allowNull: true,
+        type: "timestamp",
+        defaultValue: null,
       },
     });
   },

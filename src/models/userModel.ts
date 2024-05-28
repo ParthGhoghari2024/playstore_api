@@ -41,7 +41,7 @@ module.exports = (sequelize: Sequelize, DataTypes: any) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "roles",
+          model: "RoleModel",
           key: "id",
         },
       },
