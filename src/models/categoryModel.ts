@@ -8,7 +8,6 @@ import {
 } from "sequelize";
 import connection from "../config/dbConnect";
 
-// module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
 export default class CategoryModel extends Model<
   InferAttributes<CategoryModel>,
   InferCreationAttributes<CategoryModel>

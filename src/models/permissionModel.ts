@@ -16,7 +16,6 @@ export interface IPermissionAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-// module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
 
 export default class PermissionModel extends Model<
   InferAttributes<PermissionModel>,

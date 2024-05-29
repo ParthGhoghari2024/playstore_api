@@ -43,7 +43,7 @@ const createApplicationController = async (
     }
 
     const newApplication: InferCreationAttributes<ApplicationModel> = {
-      id: undefined,
+      id: undefined, //if type of this obj is not of infer then no need to pass
       name: name,
       developerId: developerId,
       description: description,
@@ -81,7 +81,7 @@ const editApplicationController = async (
     }
 
     const newApplication: InferCreationAttributes<ApplicationModel> = {
-      id: undefined,
+      id: undefined, //if type of this obj is not of infer then no need to pass
       name: name,
       developerId: developerId,
       description: description,

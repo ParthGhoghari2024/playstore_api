@@ -1,5 +1,5 @@
 import { QueryInterface, DataTypes, Sequelize } from "sequelize";
-module.exports = {
+export default {
   async up(queryInterface: QueryInterface, DataType: typeof DataTypes) {
     await queryInterface.addColumn("versions", "createdAt", {
       allowNull: false,

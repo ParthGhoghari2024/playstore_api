@@ -1,6 +1,6 @@
 import { QueryInterface, DataTypes, Sequelize } from "sequelize";
 import { logger } from "../utils/pino";
-module.exports = {
+export default {
   async up(queryInterface: QueryInterface, DataType: typeof DataTypes) {
     const transaction = await queryInterface.sequelize.transaction();
     try {

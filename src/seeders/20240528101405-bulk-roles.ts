@@ -1,5 +1,5 @@
 import { DataTypes, QueryInterface } from "sequelize";
-module.exports = {
+export default {
   async up(queryInterface: QueryInterface, Sequelize: typeof DataTypes) {
     await queryInterface.bulkInsert(
       "roles",

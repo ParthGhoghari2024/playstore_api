@@ -1,5 +1,5 @@
 import { QueryInterface, DataTypes } from "sequelize";
-module.exports = {
+export default {
   async up(queryInterface: QueryInterface, DataType: typeof DataTypes) {
     await queryInterface.createTable("permissions", {
       id: {
