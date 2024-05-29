@@ -8,6 +8,11 @@ module.exports = {
 };
 
 /*
+IMPORTANT: to run any seeder only one then change path of seeders-path from src to dist 
+
+*/
+
+/*
 -> npx sequelize-cli migration:generate --name anyname
 -> npx sequelize-cli migration:generate --name anyname
 -> npx sequelize-cli db:migrate
