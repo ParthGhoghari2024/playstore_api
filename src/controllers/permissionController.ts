@@ -42,4 +42,73 @@ const createPermissionController = async (
   }
 };
 
-export { createPermissionController, getAllPermissionController };
+const editPermissionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id, name, versionId, description }: IPermissionReqBody = req.body;
+
+    const newPermission: IPermissionAttributes = {
+      name: name,
+      versionId: versionId,
+      description: description,
+    };
+
+    await db.PermissionModel.update(newPermission, {
+      where: {
+        id: id,
+      },
+    });
+
+    res.json({ success: 1 });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+const deletePermissionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id: string = req.body.id;
+
+    await db.PermissionModel.destroy({
+      where: {
+        id: id,
+      },
+    });
+
+    res.json({ success: 1 });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+const getPermissionByIdConroller = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id: string = req.params.id;
+    const permission: IPermissionAttributes = await db.PermissionModel.findOne({
+      attributes: ["name", "versionId", "description"],
+      where: {
+        id: id,
+      },
+    });
+
+    res.json({ success: 1, result: permission });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+export {
+  createPermissionController,
+  getAllPermissionController,
+  editPermissionController,
+  deletePermissionController,
+  getPermissionByIdConroller,
+};

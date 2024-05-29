@@ -5,6 +5,7 @@ import { logger } from "../utils/pino";
 import { IGenre } from "../types/categoryANDGenre";
 import { IGenreAttributes } from "../models/genreModel";
 import { ICategoryAttributes } from "../models/categoryModel";
+import { getCategoryIdByName } from "../helper/categoryHelper";
 
 const createGenreController = async (
   req: Request,
@@ -14,21 +15,14 @@ const createGenreController = async (
     const genre: string = req.body.genre;
     const category: string = req.body.category;
 
-    const categoryId: ICategoryAttributes = await db.CategoryModel.findOne(
-      {
-        attributes: ["id"],
-        raw: true,
-      },
-      {
-        where: {
-          category: category,
-        },
-      }
-    );
+    const categoryId: number | null = await getCategoryIdByName(category);
 
+    if (!categoryId) {
+      res.json({ success: 0, error: "Wrong category" });
+    }
     const newGenre: IGenre = {
       genre: genre,
-      categoryId: categoryId.id!,
+      categoryId: categoryId!,
     };
 
     await db.GenreModel.create(newGenre);
