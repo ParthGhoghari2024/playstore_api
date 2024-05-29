@@ -2,23 +2,24 @@ import { Request, Response, NextFunction } from "express";
 import * as Joi from "joi";
 import { logger } from "../utils/pino";
 
-const createApplicationSchema: Joi.ObjectSchema = Joi.object({
-  name: Joi.string().required(),
+const createVersionSchema: Joi.ObjectSchema = Joi.object({
+  applicationId: Joi.number().required(),
+  version: Joi.string().required().max(255),
   description: Joi.string().required(),
-  category: Joi.string().required().max(255),
-  genre: Joi.string().required().max(255),
 });
 
-const createApplicationMiddleware = async (
+const createVersionMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { error, value }: Joi.ValidationResult =
-      createApplicationSchema.validate(req.body, {
+    const { error, value }: Joi.ValidationResult = createVersionSchema.validate(
+      req.body,
+      {
         abortEarly: false,
-      });
+      }
+    );
     if (error) {
       res.json({ success: 0, error });
       return;
@@ -29,24 +30,25 @@ const createApplicationMiddleware = async (
   }
 };
 
-const editApplicationSchema: Joi.ObjectSchema = Joi.object({
+const editVersionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  name: Joi.string().optional().max(255),
+  applicationId: Joi.number().optional(),
+  version: Joi.string().optional().max(255),
   description: Joi.string().optional(),
-  category: Joi.string().optional().max(255),
-  genre: Joi.string().optional().max(255),
 });
 
-const editApplicationMiddleware = async (
+const editVersionMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { error, value }: Joi.ValidationResult =
-      editApplicationSchema.validate(req.body, {
+    const { error, value }: Joi.ValidationResult = editVersionSchema.validate(
+      req.body,
+      {
         abortEarly: false,
-      });
+      }
+    );
     if (error) {
       res.json({ success: 0, error });
       return;
@@ -57,20 +59,22 @@ const editApplicationMiddleware = async (
   }
 };
 
-const deleteApplicationSchema: Joi.ObjectSchema = Joi.object({
+const deleteVersionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
 });
 
-const deleteApplicationMiddleware = async (
+const deleteVersionMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { error, value }: Joi.ValidationResult =
-      deleteApplicationSchema.validate(req.body, {
+    const { error, value }: Joi.ValidationResult = deleteVersionSchema.validate(
+      req.body,
+      {
         abortEarly: false,
-      });
+      }
+    );
     if (error) {
       res.json({ success: 0, error });
       return;
@@ -81,7 +85,7 @@ const deleteApplicationMiddleware = async (
   }
 };
 export {
-  createApplicationMiddleware,
-  editApplicationMiddleware,
-  deleteApplicationMiddleware,
+  createVersionMiddleware,
+  editVersionMiddleware,
+  deleteVersionMiddleware,
 };

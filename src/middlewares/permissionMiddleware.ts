@@ -2,21 +2,20 @@ import { Request, Response, NextFunction } from "express";
 import * as Joi from "joi";
 import { logger } from "../utils/pino";
 
-const createApplicationSchema: Joi.ObjectSchema = Joi.object({
-  name: Joi.string().required(),
+const createPermissionSchema: Joi.ObjectSchema = Joi.object({
+  name: Joi.string().required().max(255),
+  versionId: Joi.number().required(),
   description: Joi.string().required(),
-  category: Joi.string().required().max(255),
-  genre: Joi.string().required().max(255),
 });
 
-const createApplicationMiddleware = async (
+const createPermissionMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const { error, value }: Joi.ValidationResult =
-      createApplicationSchema.validate(req.body, {
+      createPermissionSchema.validate(req.body, {
         abortEarly: false,
       });
     if (error) {
@@ -29,22 +28,21 @@ const createApplicationMiddleware = async (
   }
 };
 
-const editApplicationSchema: Joi.ObjectSchema = Joi.object({
+const editPermissionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  name: Joi.string().optional().max(255),
+  name: Joi.string().max(255).optional(),
+  versionId: Joi.number().optional(),
   description: Joi.string().optional(),
-  category: Joi.string().optional().max(255),
-  genre: Joi.string().optional().max(255),
 });
 
-const editApplicationMiddleware = async (
+const editPermissionMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const { error, value }: Joi.ValidationResult =
-      editApplicationSchema.validate(req.body, {
+      editPermissionSchema.validate(req.body, {
         abortEarly: false,
       });
     if (error) {
@@ -57,18 +55,18 @@ const editApplicationMiddleware = async (
   }
 };
 
-const deleteApplicationSchema: Joi.ObjectSchema = Joi.object({
+const deletePermissionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
 });
 
-const deleteApplicationMiddleware = async (
+const deletePermissionMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const { error, value }: Joi.ValidationResult =
-      deleteApplicationSchema.validate(req.body, {
+      deletePermissionSchema.validate(req.body, {
         abortEarly: false,
       });
     if (error) {
@@ -81,7 +79,7 @@ const deleteApplicationMiddleware = async (
   }
 };
 export {
-  createApplicationMiddleware,
-  editApplicationMiddleware,
-  deleteApplicationMiddleware,
+  createPermissionMiddleware,
+  editPermissionMiddleware,
+  deletePermissionMiddleware,
 };

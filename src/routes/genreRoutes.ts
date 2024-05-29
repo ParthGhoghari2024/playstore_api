@@ -5,12 +5,17 @@ import {
   editGenreByIdController,
   getAllGenreController,
 } from "../controllers/genreController";
+import {
+  createGenreMiddleware,
+  deleteGenreMiddleware,
+  editGenreMiddleware,
+} from "../middlewares/genreMiddleware";
 
 const router: Router = express.Router();
 
-router.route("/").post(createGenreController);
+router.route("/").post(createGenreMiddleware, createGenreController);
 router.route("/all").get(getAllGenreController);
-router.route("/edit").post(editGenreByIdController);
-router.route("/delete").post(deleteGenereById);
+router.route("/edit").post(editGenreMiddleware, editGenreByIdController);
+router.route("/delete").post(deleteGenreMiddleware, deleteGenereById);
 
 export default router;
