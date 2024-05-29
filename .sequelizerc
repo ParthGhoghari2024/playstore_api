@@ -8,6 +8,11 @@ module.exports = {
 };
 
 /*
+-> npx sequelize-cli migration:generate --name anyname
+-> npx sequelize-cli migration:generate --name anyname
+-> npx sequelize-cli db:migrate
+*/
+/*
 
 generate a migration file with a given name:
 ->1.sequelize migration:create --name add-some-table

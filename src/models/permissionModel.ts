@@ -1,20 +1,23 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-export interface IUserAttributes {
+export interface IPermissionAttributes {
   id?: number;
   name: string;
-  email: string;
-  roleId: number;
+  versionId: number;
+  description: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
 module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class UserModel extends Model<IUserAttributes> implements IUserAttributes {
+  class PermissionModel
+    extends Model<IPermissionAttributes>
+    implements IPermissionAttributes
+  {
     public id!: number;
     public name!: string;
-    public email!: string;
-    public roleId!: number;
+    public versionId!: number;
+    public description!: string;
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -22,7 +25,7 @@ module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
     public readonly deletedAt!: Date;
   }
 
-  UserModel.init(
+  PermissionModel.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -33,26 +36,26 @@ module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: false,
       },
-      email: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      roleId: {
+      versionId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "RoleModel",
+          model: "VersionModel",
           key: "id",
         },
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
       },
     },
     {
       timestamps: true,
       paranoid: true,
-      tableName: "users",
+      tableName: "permissions",
       sequelize,
     }
   );
 
-  return UserModel;
+  return PermissionModel;
 };

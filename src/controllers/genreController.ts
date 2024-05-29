@@ -89,8 +89,26 @@ const editGenreByIdController = async (
   }
 };
 
+const deleteGenereById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id: string = req.body.id;
+
+    await db.GenreModel.destroy({
+      where: {
+        id: id,
+      },
+    });
+
+    res.json({ success: 1 });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+
 export {
   createGenreController,
   getAllGenreController,
   editGenreByIdController,
+  deleteGenereById,
 };

@@ -27,10 +27,16 @@ app.use(express.static("public"));
 import userRoute from "./routes/userRoutes";
 import categoryRoute from "./routes/categoryRoutes";
 import genreRoute from "./routes/genreRoutes";
+import applicationRoute from "./routes/applicationRoutes";
+import versionRoute from "./routes/versionRoutes";
+import permissionRoute from "./routes/permissionRoutes";
 import { ICorsOptions } from "./types/config";
 app.use("/user", userRoute);
 app.use("/category", categoryRoute);
 app.use("/genre", genreRoute);
+app.use("/application", applicationRoute);
+app.use("/version", versionRoute);
+app.use("/permission", permissionRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello ts node");

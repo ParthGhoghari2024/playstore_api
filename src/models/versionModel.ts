@@ -1,20 +1,23 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-export interface IUserAttributes {
+export interface IVersionAttributes {
   id?: number;
-  name: string;
-  email: string;
-  roleId: number;
+  applicationId: number;
+  version: string;
+  description: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
 module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class UserModel extends Model<IUserAttributes> implements IUserAttributes {
+  class VersionModel
+    extends Model<IVersionAttributes>
+    implements IVersionAttributes
+  {
     public id!: number;
-    public name!: string;
-    public email!: string;
-    public roleId!: number;
+    public applicationId!: number;
+    public description!: string;
+    public version!: string;
 
     // timestamps!
     public readonly createdAt!: Date;
@@ -22,37 +25,37 @@ module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
     public readonly deletedAt!: Date;
   }
 
-  UserModel.init(
+  VersionModel.init(
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      roleId: {
+      applicationId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "RoleModel",
+          model: "ApplicationModel",
           key: "id",
         },
+      },
+      version: {
+        type: DataType.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
       },
     },
     {
       timestamps: true,
       paranoid: true,
-      tableName: "users",
+      tableName: "versions",
       sequelize,
     }
   );
 
-  return UserModel;
+  return VersionModel;
 };
