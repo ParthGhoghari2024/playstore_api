@@ -4,21 +4,9 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Optional,
-  Sequelize,
 } from "sequelize";
 import connection from "../config/dbConnect";
-export interface IApplicationAttributes {
-  id?: number;
-  name: string;
-  developerId: number;
-  description: string;
-  categoryId: number;
-  genreId: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
-}
+
 export default class ApplicationModel extends Model<
   InferAttributes<ApplicationModel>,
   InferCreationAttributes<ApplicationModel>

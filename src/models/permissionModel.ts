@@ -1,12 +1,9 @@
 import {
-  CreateOptions,
-  CreationAttributes,
   CreationOptional,
   DataTypes,
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Sequelize,
 } from "sequelize";
 import connection from "../config/dbConnect";
 

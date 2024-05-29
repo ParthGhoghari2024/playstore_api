@@ -7,7 +7,7 @@ const getAllVersionController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allVersions: IVersionAttributes[] = await VersionModel.findAll({
+    const allVersions: VersionModel[] = await VersionModel.findAll({
       attributes: ["applicationId", "version", "description"],
     });
 

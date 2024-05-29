@@ -6,12 +6,23 @@ import {
   getAllApplicationController,
   getApplicationById,
 } from "../controllers/applicationController";
+import {
+  createApplicationMiddleware,
+  deleteApplicationMiddleware,
+  editApplicationMiddleware,
+} from "../middlewares/applicationMiddleware";
 
 const router: Router = express.Router();
 
-router.route("/").post(createApplicationController);
+router
+  .route("/")
+  .post(createApplicationMiddleware, createApplicationController);
 router.route("/all").get(getAllApplicationController);
-router.route("/edit").post(editApplicationController);
+router
+  .route("/edit")
+  .post(editApplicationMiddleware, editApplicationController);
 router.route("/:id").get(getApplicationById);
-router.route("/delete").post(deleteApplicationController);
+router
+  .route("/delete")
+  .post(deleteApplicationMiddleware, deleteApplicationController);
 export default router;

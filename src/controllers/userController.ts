@@ -4,6 +4,8 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import { IUser } from "../types/user";
 import UserModel, { IUserAttributes } from "../models/userModel";
+import { InferAttributes } from "sequelize";
+
 interface IError extends Error {
   parent: {
     sqlMessage: string;
@@ -15,7 +17,7 @@ const getAllUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const users: IUserAttributes[] = await UserModel.findAll({
+    const users: UserModel[] = await UserModel.findAll({
       attributes: ["id", "name2", "email", "createdAt", "updatedAt"],
       raw: true,
     });
@@ -36,7 +38,7 @@ const createUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const roleId: number = 1; //TODO:
+    const roleId: number = 1;
     const newUser: IUserAttributes = {
       name: req.body.name,
       email: req.body.email,
@@ -62,8 +64,6 @@ const deleteUserController = async (
         id: userId,
       },
     });
-
-    // console.log(deleteUserResult);
 
     res.json({ success: 1 });
   } catch (error) {

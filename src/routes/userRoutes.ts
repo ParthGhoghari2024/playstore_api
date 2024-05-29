@@ -4,11 +4,15 @@ import {
   deleteUserController,
   getAllUserController,
 } from "../controllers/userController";
+import {
+  createUserMiddleware,
+  deleteUserMiddleware,
+} from "../middlewares/userMiddleware";
 
 const router: Router = express.Router();
 
-router.route("/").post(createUserController);
-router.route("/delete").post(deleteUserController);
+router.route("/").post(createUserMiddleware, createUserController);
+router.route("/delete").post(deleteUserMiddleware, deleteUserController);
 
 router.route("/all").get(getAllUserController);
 

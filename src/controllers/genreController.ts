@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 
 import { logger } from "../utils/pino";
 import { IGenre } from "../types/categoryANDGenre";
-import GenreModel, { IGenreAttributes } from "../models/genreModel";
-import CategoryModel, { ICategoryAttributes } from "../models/categoryModel";
+import GenreModel from "../models/genreModel";
+import CategoryModel from "../models/categoryModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 const createGenreController = async (
   req: Request,
@@ -35,7 +35,7 @@ const getAllGenreController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allGenres: IGenreAttributes[] = await GenreModel.findAll({
+    const allGenres: GenreModel[] = await GenreModel.findAll({
       attributes: ["genre", "categoryId"], //TODO: join the table and return category name instead of id
     });
 

@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import ApplicationModel, {
-  IApplicationAttributes,
-} from "../models/applicationModel";
+import ApplicationModel from "../models/applicationModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import { getGenreIdByName } from "../helper/genreHelper";
 import { IApplicationReqBody } from "../types/application";
@@ -45,12 +43,12 @@ const createApplicationController = async (
     }
 
     const newApplication: InferCreationAttributes<ApplicationModel> = {
+      id: undefined,
       name: name,
       developerId: developerId,
       description: description,
       categoryId: categoryId,
       genreId: genreId,
-      id: undefined,
     };
 
     await ApplicationModel.create(newApplication);

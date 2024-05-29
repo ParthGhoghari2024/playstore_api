@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import { ICategory } from "../types/categoryANDGenre";
 import { logger } from "../utils/pino";
-import CategoryModel, { ICategoryAttributes } from "../models/categoryModel";
+import CategoryModel from "../models/categoryModel";
 
 const createCategoryController = async (
   req: Request,
@@ -25,7 +25,7 @@ const getAllCategoryController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allCategories = await CategoryModel.findAll({
+    const allCategories: CategoryModel[] = await CategoryModel.findAll({
       attributes: ["category"],
     });
 
