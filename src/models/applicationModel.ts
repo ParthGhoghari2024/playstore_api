@@ -1,5 +1,13 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
-
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Optional,
+  Sequelize,
+} from "sequelize";
+import connection from "../config/dbConnect";
 export interface IApplicationAttributes {
   id?: number;
   name: string;
@@ -11,71 +19,62 @@ export interface IApplicationAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class ApplicationModel
-    extends Model<IApplicationAttributes>
-    implements IApplicationAttributes
+export default class ApplicationModel extends Model<
+  InferAttributes<ApplicationModel>,
+  InferCreationAttributes<ApplicationModel>
+> {
+  declare id: CreationOptional<number>;
+  declare name: string;
+  declare developerId: number;
+  declare description: string;
+  declare categoryId: number;
+  declare genreId: number;
+}
+
+ApplicationModel.init(
   {
-    public id!: number;
-    public name!: string;
-    public developerId!: number;
-    public description!: string;
-    public categoryId!: number;
-    public genreId!: number;
-
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-    public readonly deletedAt!: Date;
-  }
-
-  ApplicationModel.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      name: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      developerId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "UserModel",
-          key: "id",
-        },
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      categoryId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "categoryModel",
-          key: "id",
-        },
-      },
-      genreId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "GenreModel",
-          key: "id",
-        },
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    developerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "UserModel",
+        key: "id",
       },
     },
-    {
-      timestamps: true,
-      paranoid: true,
-      tableName: "applications",
-      sequelize,
-    }
-  );
-
-  return ApplicationModel;
-};
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "categoryModel",
+        key: "id",
+      },
+    },
+    genreId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "GenreModel",
+        key: "id",
+      },
+    },
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+    tableName: "applications",
+    sequelize: connection,
+  }
+);

@@ -1,4 +1,12 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Sequelize,
+} from "sequelize";
+import connection from "../config/dbConnect";
 
 export interface IGenreAttributes {
   id?: number;
@@ -8,45 +16,40 @@ export interface IGenreAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class GenreModel extends Model<IGenreAttributes> implements IGenreAttributes {
-    public id!: number;
-    public genre!: string;
-    public categoryId!: number;
+// module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
+export default class GenreModel extends Model<
+  InferAttributes<GenreModel>,
+  InferCreationAttributes<GenreModel>
+> {
+  declare id: CreationOptional<number>;
+  declare genre: string;
+  declare categoryId: number;
+}
 
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-    public readonly deletedAt!: Date;
-  }
-
-  GenreModel.init(
-    {
-      id: {
-        type: DataType.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      genre: {
-        type: DataType.STRING(255),
-        allowNull: false,
-      },
-      categoryId: {
-        type: DataType.INTEGER,
-        allowNull: false,
-        references: {
-          model: "UserModel",
-          key: "id",
-        },
+GenreModel.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    genre: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "UserModel",
+        key: "id",
       },
     },
-    {
-      timestamps: true,
-      paranoid: true,
-      tableName: "genres",
-      sequelize,
-    }
-  );
-
-  return GenreModel;
-};
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+    tableName: "genres",
+    sequelize: connection,
+  }
+);

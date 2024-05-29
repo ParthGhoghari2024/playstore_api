@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import db from "../models";
-import { IVersionAttributes } from "../models/versionModel";
+import VersionModel, { IVersionAttributes } from "../models/versionModel";
 import { IVersionReqBody } from "../types/version";
 const getAllVersionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allVersions: IVersionAttributes[] = await db.VersionModel.findAll({
+    const allVersions: IVersionAttributes[] = await VersionModel.findAll({
       attributes: ["applicationId", "version", "description"],
     });
 
@@ -31,7 +30,7 @@ const createVersionController = async (
       version: version,
       description: description,
     };
-    await db.VersionModel.create(newVersion);
+    await VersionModel.create(newVersion);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -54,7 +53,7 @@ const editVersionController = async (
       description: description,
     };
 
-    await db.VersionModel.update(newVersion, {
+    await VersionModel.update(newVersion, {
       where: {
         id: id,
       },
@@ -71,7 +70,7 @@ const getVersionById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.params.id;
 
-    const versionRes: IVersionAttributes = await db.VersionModel.findOne({
+    const versionRes: VersionModel | null = await VersionModel.findOne({
       attributes: ["applicationId", "version", "description"],
       where: {
         id: id,
@@ -92,7 +91,7 @@ const deleteVersionController = async (
   try {
     const id: string = req.body.id;
 
-    await db.VersionModel.destroy({
+    await VersionModel.destroy({
       where: {
         id: id,
       },

@@ -1,4 +1,4 @@
-import db from "../models";
+import CategoryModel from "../models/categoryModel";
 import { IId } from "../types/interface";
 import { logger } from "../utils/pino";
 
@@ -6,7 +6,7 @@ const getCategoryIdByName = async (
   category: string
 ): Promise<number | null> => {
   try {
-    const categoryRes: IId = await db.CategoryModel.findOne({
+    const categoryRes: CategoryModel | null = await CategoryModel.findOne({
       attributes: ["id"],
       raw: true,
       where: {

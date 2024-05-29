@@ -1,4 +1,14 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import {
+  CreateOptions,
+  CreationAttributes,
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Sequelize,
+} from "sequelize";
+import connection from "../config/dbConnect";
 
 export interface IPermissionAttributes {
   id?: number;
@@ -9,53 +19,46 @@ export interface IPermissionAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class PermissionModel
-    extends Model<IPermissionAttributes>
-    implements IPermissionAttributes
+// module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
+
+export default class PermissionModel extends Model<
+  InferAttributes<PermissionModel>,
+  InferCreationAttributes<PermissionModel>
+> {
+  declare id: CreationOptional<number>;
+  declare name: string;
+  declare versionId: number;
+  declare description: string;
+}
+
+PermissionModel.init(
   {
-    public id!: number;
-    public name!: string;
-    public versionId!: number;
-    public description!: string;
-
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-    public readonly deletedAt!: Date;
-  }
-
-  PermissionModel.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      name: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      versionId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "VersionModel",
-          key: "id",
-        },
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    versionId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "VersionModel",
+        key: "id",
       },
     },
-    {
-      timestamps: true,
-      paranoid: true,
-      tableName: "permissions",
-      sequelize,
-    }
-  );
-
-  return PermissionModel;
-};
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+    tableName: "permissions",
+    sequelize: connection,
+  }
+);

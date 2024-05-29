@@ -1,4 +1,12 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Sequelize,
+} from "sequelize";
+import connection from "../config/dbConnect";
 
 interface RoleAttributes {
   id?: number;
@@ -7,36 +15,30 @@ interface RoleAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class RoleModel extends Model<RoleAttributes> implements RoleAttributes {
-    public id!: number;
-    public role!: string;
+export default class RoleModel
+  extends Model<InferAttributes<RoleModel>, InferCreationAttributes<RoleModel>>
+  implements RoleAttributes
+{
+  declare id: CreationOptional<number>;
+  declare role: string;
+}
 
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-    public readonly deletedAt!: Date;
-  }
-
-  RoleModel.init(
-    {
-      id: {
-        type: DataType.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      role: {
-        type: DataType.STRING(255),
-        allowNull: false,
-      },
+RoleModel.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    {
-      timestamps: true,
-      paranoid: true,
-      tableName: "roles",
-      sequelize,
-    }
-  );
-
-  return RoleModel;
-};
+    role: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+    tableName: "roles",
+    sequelize: connection,
+  }
+);

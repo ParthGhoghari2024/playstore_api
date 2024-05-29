@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 
-import db from "../models";
 import { logger } from "../utils/pino";
 import { IGenre } from "../types/categoryANDGenre";
-import { IGenreAttributes } from "../models/genreModel";
-import { ICategoryAttributes } from "../models/categoryModel";
+import GenreModel, { IGenreAttributes } from "../models/genreModel";
+import CategoryModel, { ICategoryAttributes } from "../models/categoryModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
-
 const createGenreController = async (
   req: Request,
   res: Response
@@ -25,7 +23,7 @@ const createGenreController = async (
       categoryId: categoryId!,
     };
 
-    await db.GenreModel.create(newGenre);
+    await GenreModel.create(newGenre);
     res.json({ success: 1 });
   } catch (error) {
     logger.error(error);
@@ -37,7 +35,7 @@ const getAllGenreController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allGenres: IGenreAttributes = await db.GenreModel.findAll({
+    const allGenres: IGenreAttributes[] = await GenreModel.findAll({
       attributes: ["genre", "categoryId"], //TODO: join the table and return category name instead of id
     });
 
@@ -57,7 +55,7 @@ const editGenreByIdController = async (
     const category: string = req.body.category;
     const id: string = req.body.id;
 
-    const categoryId: ICategoryAttributes = await db.CategoryModel.findOne({
+    const categoryId: CategoryModel | null = await CategoryModel.findOne({
       attributes: ["id"],
       raw: true,
       where: {
@@ -67,10 +65,10 @@ const editGenreByIdController = async (
 
     const newGenre: IGenre = {
       genre: genre,
-      categoryId: categoryId.id!,
+      categoryId: categoryId!.id!,
     };
 
-    await db.GenreModel.update(newGenre, {
+    await GenreModel.update(newGenre, {
       where: {
         id: id,
       },
@@ -87,7 +85,7 @@ const deleteGenereById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.body.id;
 
-    await db.GenreModel.destroy({
+    await GenreModel.destroy({
       where: {
         id: id,
       },

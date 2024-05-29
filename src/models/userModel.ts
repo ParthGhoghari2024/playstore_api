@@ -1,4 +1,12 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Sequelize,
+} from "sequelize";
+import connection from "../config/dbConnect";
 
 export interface IUserAttributes {
   id?: number;
@@ -9,50 +17,44 @@ export interface IUserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class UserModel extends Model<IUserAttributes> implements IUserAttributes {
-    public id!: number;
-    public name!: string;
-    public email!: string;
-    public roleId!: number;
+export default class UserModel extends Model<
+  InferAttributes<UserModel>,
+  InferCreationAttributes<UserModel>
+> {
+  declare id: CreationOptional<number>;
+  declare name: string;
+  declare email: string;
+  declare roleId: number;
+}
 
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-    public readonly deletedAt!: Date;
-  }
-
-  UserModel.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      name: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-      },
-      roleId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "RoleModel",
-          key: "id",
-        },
+UserModel.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "RoleModel",
+        key: "id",
       },
     },
-    {
-      timestamps: true,
-      paranoid: true,
-      tableName: "users",
-      sequelize,
-    }
-  );
-
-  return UserModel;
-};
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+    tableName: "users",
+    sequelize: connection,
+  }
+);

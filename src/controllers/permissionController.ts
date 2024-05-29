@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import db from "../models";
 import { IPermissionReqBody } from "../types/permission";
-import { IPermissionAttributes } from "../models/permissionModel";
+import PermissionModel, {
+  IPermissionAttributes,
+} from "../models/permissionModel";
 
 const getAllPermissionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allPermissions = await db.PermissionModel.findAll({
+    const allPermissions: PermissionModel[] = await PermissionModel.findAll({
       attributes: ["name", "versionId", "description"],
     });
 
@@ -33,7 +34,7 @@ const createPermissionController = async (
       description: description,
     };
 
-    await db.PermissionModel.create(newPermission);
+    await PermissionModel.create(newPermission);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -55,7 +56,7 @@ const editPermissionController = async (
       description: description,
     };
 
-    await db.PermissionModel.update(newPermission, {
+    await PermissionModel.update(newPermission, {
       where: {
         id: id,
       },
@@ -74,7 +75,7 @@ const deletePermissionController = async (
   try {
     const id: string = req.body.id;
 
-    await db.PermissionModel.destroy({
+    await PermissionModel.destroy({
       where: {
         id: id,
       },
@@ -92,7 +93,7 @@ const getPermissionByIdConroller = async (
 ): Promise<void> => {
   try {
     const id: string = req.params.id;
-    const permission: IPermissionAttributes = await db.PermissionModel.findOne({
+    const permission: PermissionModel | null = await PermissionModel.findOne({
       attributes: ["name", "versionId", "description"],
       where: {
         id: id,

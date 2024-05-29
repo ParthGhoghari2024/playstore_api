@@ -1,10 +1,10 @@
-import db from "../models";
+import GenreModel from "../models/genreModel";
 import { IId } from "../types/interface";
 import { logger } from "../utils/pino";
 
 const getGenreIdByName = async (genre: string): Promise<number | null> => {
   try {
-    const genreRes: IId = await db.GenreModel.findOne({
+    const genreRes: GenreModel | null = await GenreModel.findOne({
       attributes: ["id"],
       raw: true,
       where: {

@@ -1,4 +1,12 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  Sequelize,
+} from "sequelize";
+import connection from "../config/dbConnect";
 
 export interface IVersionAttributes {
   id?: number;
@@ -9,53 +17,44 @@ export interface IVersionAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-module.exports = (sequelize: Sequelize, DataType: typeof DataTypes) => {
-  class VersionModel
-    extends Model<IVersionAttributes>
-    implements IVersionAttributes
+export default class VersionModel extends Model<
+  InferAttributes<VersionModel>,
+  InferCreationAttributes<VersionModel>
+> {
+  declare id: CreationOptional<number>;
+  declare applicationId: number;
+  declare description: string;
+  declare version: string;
+}
+
+VersionModel.init(
   {
-    public id!: number;
-    public applicationId!: number;
-    public description!: string;
-    public version!: string;
-
-    // timestamps!
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-    public readonly deletedAt!: Date;
-  }
-
-  VersionModel.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      applicationId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "ApplicationModel",
-          key: "id",
-        },
-      },
-      version: {
-        type: DataType.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    applicationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "ApplicationModel",
+        key: "id",
       },
     },
-    {
-      timestamps: true,
-      paranoid: true,
-      tableName: "versions",
-      sequelize,
-    }
-  );
-
-  return VersionModel;
-};
+    version: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: true,
+    paranoid: true,
+    tableName: "versions",
+    sequelize: connection,
+  }
+);

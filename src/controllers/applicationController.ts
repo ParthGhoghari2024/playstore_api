@@ -1,19 +1,20 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import db from "../models";
-import { IApplicationAttributes } from "../models/applicationModel";
+import ApplicationModel, {
+  IApplicationAttributes,
+} from "../models/applicationModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import { getGenreIdByName } from "../helper/genreHelper";
 import { IApplicationReqBody } from "../types/application";
+import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
 const getAllApplicationController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allApplications: IApplicationAttributes[] =
-      await db.ApplicationModel.findAll({
-        attributes: ["name", "description", "categoryId", "genreId"],
-      });
+    const allApplications: ApplicationModel[] = await ApplicationModel.findAll({
+      attributes: ["name", "description", "categoryId", "genreId"],
+    });
     res.json({ success: 1, result: allApplications });
   } catch (error) {
     logger.error(error);
@@ -43,15 +44,16 @@ const createApplicationController = async (
       return;
     }
 
-    const newApplication: IApplicationAttributes = {
+    const newApplication: InferCreationAttributes<ApplicationModel> = {
       name: name,
       developerId: developerId,
       description: description,
       categoryId: categoryId,
       genreId: genreId,
+      id: undefined,
     };
 
-    await db.ApplicationModel.create(newApplication);
+    await ApplicationModel.create(newApplication);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -80,7 +82,8 @@ const editApplicationController = async (
       return;
     }
 
-    const newApplication: IApplicationAttributes = {
+    const newApplication: InferCreationAttributes<ApplicationModel> = {
+      id: undefined,
       name: name,
       developerId: developerId,
       description: description,
@@ -88,7 +91,7 @@ const editApplicationController = async (
       genreId: genreId,
     };
 
-    await db.ApplicationModel.update(newApplication, {
+    await ApplicationModel.update(newApplication, {
       where: {
         id: id,
       },
@@ -107,8 +110,8 @@ const getApplicationById = async (
 ): Promise<void> => {
   try {
     const id: string = req.params.id;
-    const applicationDetail: IApplicationAttributes =
-      await db.ApplicationModel.findOne({
+    const applicationDetail: ApplicationModel | null =
+      await ApplicationModel.findOne({
         attributes: [
           "name",
           "description",
@@ -135,7 +138,7 @@ const deleteApplicationController = async (
   try {
     const id: string = req.body.id;
 
-    await db.ApplicationModel.destroy({
+    await ApplicationModel.destroy({
       where: {
         id: id,
       },
