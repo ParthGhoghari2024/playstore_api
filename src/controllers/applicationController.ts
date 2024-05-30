@@ -178,7 +178,32 @@ const getApplicationByUserController = async (
     res.json({ success: 0 });
   }
 };
+const getApplicationByGenre = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const genre: string = req.body.genre;
+    const genreId: number | null = await getGenreIdByName(genre);
 
+    if (!genreId) {
+      res.json({ success: 0, error: "Wrong Genre" });
+      return;
+    }
+
+    const applications: Application[] = await db.Application.findAll({
+      attributes: ["name", "description"],
+      where: {
+        genreId: genreId,
+      },
+    });
+
+    res.json({ success: 1, result: applications });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
 export {
   getAllApplicationController,
   createApplicationController,
@@ -186,4 +211,5 @@ export {
   getApplicationById,
   deleteApplicationController,
   getApplicationByUserController,
+  getApplicationByGenre,
 };

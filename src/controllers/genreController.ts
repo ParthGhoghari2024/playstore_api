@@ -5,6 +5,8 @@ import { getCategoryIdByName } from "../helper/categoryHelper";
 import db from "../models";
 import Genre, { IGenreAttributes } from "../models/genreModel";
 import Category from "../models/categoryModel";
+import Application from "../models/applicationModel";
+import { getGenreIdByName } from "../helper/genreHelper";
 const createGenreController = async (
   req: Request,
   res: Response

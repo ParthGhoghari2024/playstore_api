@@ -23,11 +23,9 @@ app.use(cors(corsOptions));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 import db from "./models";
-// console.log(db);
 
 db.sequelize.authenticate().then(() => {
   console.log("db connected");
-  // console.log(db);
 });
 import userRoute from "./routes/userRoutes";
 import categoryRoute from "./routes/categoryRoutes";

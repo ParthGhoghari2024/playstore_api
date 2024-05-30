@@ -7,7 +7,7 @@ const run = (): void => {
 
   const srcDirViews: string = "./src/views";
   const distDirViews: string = "./dist/views";
-  const filter = (file: string) => {
+  const filter = (file: string): boolean => {
     // get the file extension
     const ext: string = path.extname(file);
 

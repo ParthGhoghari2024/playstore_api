@@ -17,8 +17,6 @@ import {
 import User from "./userModel";
 import Category from "./categoryModel";
 import Genre from "./genreModel";
-import db from ".";
-import models from "./models";
 import Version from "./versionModel";
 export interface IApplicationAttributes {
   id?: number;

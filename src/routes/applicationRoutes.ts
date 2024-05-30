@@ -4,6 +4,7 @@ import {
   deleteApplicationController,
   editApplicationController,
   getAllApplicationController,
+  getApplicationByGenre,
   getApplicationById,
   getApplicationByUserController,
 } from "../controllers/applicationController";
@@ -27,5 +28,7 @@ router
   .post(deleteApplicationMiddleware, deleteApplicationController);
 
 router.route("/byUser").get(getApplicationByUserController);
+router.route("/byGenre").post(getApplicationByGenre);
+
 router.route("/:id").get(getApplicationById);
 export default router;
