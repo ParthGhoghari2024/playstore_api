@@ -2,11 +2,13 @@ import { Optional } from "sequelize";
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
   DeletedAt,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -15,6 +17,9 @@ import {
 import User from "./userModel";
 import Category from "./categoryModel";
 import Genre from "./genreModel";
+import db from ".";
+import models from "./models";
+import Version from "./versionModel";
 export interface IApplicationAttributes {
   id?: number;
   name: string;
@@ -23,9 +28,9 @@ export interface IApplicationAttributes {
   categoryId: number;
   genreId: number;
 }
+
 export interface IApplicationCreationAttributes
   extends Optional<IApplicationAttributes, "id"> {}
-
 @Table({ tableName: "applications" })
 class Application extends Model<
   IApplicationAttributes,
@@ -37,12 +42,16 @@ class Application extends Model<
   id!: number;
 
   @AllowNull(false)
-  @Column({ type: DataType.STRING(255) })
+  @Column({
+    type: DataType.STRING(255),
+  })
   name!: string;
 
   @AllowNull(false)
   @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER })
+  @Column({
+    type: DataType.INTEGER,
+  })
   developerId!: number;
 
   @AllowNull(false)
@@ -65,27 +74,18 @@ class Application extends Model<
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @BelongsTo(() => User, "developerId")
+  developer!: User;
+
+  @BelongsTo(() => Genre, "genreId")
+  genre!: Genre;
+
+  @BelongsTo(() => Category, "categoryId")
+  category!: Category;
+
+  @HasMany(() => Version, "applicationId")
+  versions!: Version[];
 }
 
-// UserModel.hasMany(Application, {
-//   foreignKey: "developerId",
-// });
-// Application.belongsTo(UserModel, {
-//   foreignKey: "developerId",
-// });
-
-// Application.belongsTo(GenreModel, {
-//   foreignKey: "genreId",
-// });
-// GenreModel.hasMany(Application, {
-//   foreignKey: "genreId",
-// });
-
-// Application.belongsTo(CategoryModel, {
-//   foreignKey: "categoryId",
-// });
-
-// CategoryModel.hasMany(Application, {
-//   foreignKey: "categoryId",
-// });
 export default Application;

@@ -2,6 +2,7 @@ import { DataTypes, Optional } from "sequelize";
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -52,6 +53,9 @@ class Version extends Model<IVersionAttributes, IVersionCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @BelongsTo(() => Application, "applicationId")
+  application!: Application;
 }
 
 export default Version;

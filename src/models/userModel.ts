@@ -1,5 +1,4 @@
 import { DataTypes, Optional } from "sequelize";
-import connection from "../config/dbConnect";
 import ApplicationModel from "./applicationModel";
 import {
   AllowNull,
@@ -9,12 +8,14 @@ import {
   DataType,
   DeletedAt,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
 import Role from "./roleModel";
+import Application from "./applicationModel";
 
 export interface IUserAttributes {
   id?: number;
@@ -53,6 +54,9 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @HasMany(() => Application, "developerId")
+  application!: Application[];
 }
 
 export default User;

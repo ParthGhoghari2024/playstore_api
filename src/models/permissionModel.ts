@@ -1,4 +1,3 @@
-import connection from "../config/dbConnect";
 import {
   AllowNull,
   AutoIncrement,

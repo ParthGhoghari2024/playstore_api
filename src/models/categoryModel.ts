@@ -5,12 +5,14 @@ import {
   CreatedAt,
   DataType,
   DeletedAt,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
 import { DataTypes, Optional } from "sequelize";
+import Application from "./applicationModel";
 
 export interface ICategoryAttributes {
   id?: number;
@@ -37,6 +39,9 @@ class Category extends Model<ICategoryAttributes, ICategoryCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @HasMany(() => Application, "categoryId")
+  applications!: Application[];
 }
 
 export default Category;

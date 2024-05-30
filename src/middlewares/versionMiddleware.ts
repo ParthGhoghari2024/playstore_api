@@ -32,9 +32,9 @@ const createVersionMiddleware = async (
 
 const editVersionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  applicationId: Joi.number().optional(),
-  version: Joi.string().optional().max(255),
-  description: Joi.string().optional(),
+  applicationId: Joi.number().required(),
+  version: Joi.string().required().max(255),
+  description: Joi.string().required(),
 });
 
 const editVersionMiddleware = async (

@@ -30,7 +30,8 @@ const createGenreMiddleware = async (
 
 const editGenreSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  genre: Joi.string().optional().max(255),
+  genre: Joi.string().required().max(255),
+  category: Joi.string().required().max(255),
 });
 
 const editGenreMiddleware = async (

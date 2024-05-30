@@ -31,10 +31,10 @@ const createApplicationMiddleware = async (
 
 const editApplicationSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  name: Joi.string().optional().max(255),
-  description: Joi.string().optional(),
-  category: Joi.string().optional().max(255),
-  genre: Joi.string().optional().max(255),
+  name: Joi.string().required().max(255),
+  description: Joi.string().required(),
+  category: Joi.string().required().max(255),
+  genre: Joi.string().required().max(255),
 });
 
 const editApplicationMiddleware = async (

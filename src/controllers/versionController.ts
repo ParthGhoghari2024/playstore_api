@@ -3,13 +3,16 @@ import { logger } from "../utils/pino";
 import Version, { IVersionAttributes } from "../models/versionModel";
 import { IVersionReqBody } from "../types/version";
 import db from "../models";
+import Application from "../models/applicationModel";
+import Category from "../models/categoryModel";
+import Genre from "../models/genreModel";
 
 const getAllVersionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allVersions: Version[] = await Version.findAll({
+    const allVersions: Version[] = await db.Version.findAll({
       attributes: ["applicationId", "version", "description"],
     });
 
@@ -32,7 +35,7 @@ const createVersionController = async (
       version: version,
       description: description,
     };
-    await Version.create(newVersion);
+    await db.Version.create(newVersion);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -55,7 +58,7 @@ const editVersionController = async (
       description: description,
     };
 
-    await Version.update(newVersion, {
+    await db.Version.update(newVersion, {
       where: {
         id: id,
       },
@@ -72,7 +75,7 @@ const getVersionById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.params.id;
 
-    const versionRes: Version | null = await Version.findOne({
+    const versionRes: Version | null = await db.Version.findOne({
       attributes: ["applicationId", "version", "description"],
       where: {
         id: id,
@@ -93,7 +96,7 @@ const deleteVersionController = async (
   try {
     const id: string = req.body.id;
 
-    await Version.destroy({
+    await db.Version.destroy({
       where: {
         id: id,
       },
@@ -105,10 +108,49 @@ const deleteVersionController = async (
     res.json({ success: 0 });
   }
 };
+
+const getAppVersionsController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const appId: number = req.body.appId;
+    const appVersions = await db.Version.findAll({
+      attributes: ["version", "description"],
+      where: {
+        applicationId: appId,
+      },
+      include: [
+        {
+          model: db.Application,
+          foreignKey: "applicationId",
+          attributes: ["name", "description"],
+          include: [
+            {
+              model: db.Category,
+              attributes: ["category"],
+            },
+            {
+              model: db.Genre,
+              attributes: ["genre"],
+            },
+          ],
+        },
+      ],
+      raw: true,
+    });
+
+    res.json({ success: 1, result: appVersions });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
 export {
   getAllVersionController,
   createVersionController,
   editVersionController,
   getVersionById,
   deleteVersionController,
+  getAppVersionsController,
 };

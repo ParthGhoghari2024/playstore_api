@@ -4,6 +4,7 @@ import {
   deleteVersionController,
   editVersionController,
   getAllVersionController,
+  getAppVersionsController,
   getVersionById,
 } from "../controllers/versionController";
 import {
@@ -19,5 +20,6 @@ router.route("/").post(createVersionMiddleware, createVersionController);
 router.route("/:id").get(getVersionById);
 router.route("/edit").post(editVersionMiddleware, editVersionController);
 router.route("/delete").post(deleteVersionMiddleware, deleteVersionController);
+router.route("/app/").post(getAppVersionsController);
 
 export default router;

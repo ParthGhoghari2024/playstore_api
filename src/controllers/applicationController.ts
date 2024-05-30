@@ -92,8 +92,7 @@ const editApplicationController = async (
       categoryId: categoryId,
       genreId: genreId,
     };
-
-    await Application.update(newApplication, {
+    await db.Application.update(newApplication, {
       where: {
         id: id,
       },
@@ -112,7 +111,7 @@ const getApplicationById = async (
 ): Promise<void> => {
   try {
     const id: string = req.params.id;
-    const applicationDetail: Application | null = await Application.findOne({
+    const applicationDetail: Application | null = await db.Application.findOne({
       attributes: [
         "name",
         "description",
@@ -139,7 +138,7 @@ const deleteApplicationController = async (
   try {
     const id: string = req.body.id;
 
-    await Application.destroy({
+    await db.Application.destroy({
       where: {
         id: id,
       },

@@ -28,7 +28,7 @@ const createCategoryMiddleware = async (
 
 const editCategorySchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  category: Joi.string().optional().max(255),
+  category: Joi.string().required().max(255),
 });
 
 const editCategoryMiddleware = async (

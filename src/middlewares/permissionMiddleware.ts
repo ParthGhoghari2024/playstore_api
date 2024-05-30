@@ -30,9 +30,9 @@ const createPermissionMiddleware = async (
 
 const editPermissionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  name: Joi.string().max(255).optional(),
-  versionId: Joi.number().optional(),
-  description: Joi.string().optional(),
+  name: Joi.string().max(255).required(),
+  versionId: Joi.number().required(),
+  description: Joi.string().required(),
 });
 
 const editPermissionMiddleware = async (

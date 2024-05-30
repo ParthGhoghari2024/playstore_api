@@ -1,4 +1,3 @@
-import connection from "../config/dbConnect";
 import {
   AllowNull,
   AutoIncrement,
@@ -7,6 +6,7 @@ import {
   DataType,
   DeletedAt,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -14,6 +14,7 @@ import {
 } from "sequelize-typescript";
 import { DataTypes, Optional } from "sequelize";
 import Category from "./categoryModel";
+import Application from "./applicationModel";
 
 export interface IGenreAttributes {
   id?: number;
@@ -44,5 +45,8 @@ class Genre extends Model<IGenreAttributes, IGenreCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @HasMany(() => Application, "genreId")
+  applications!: Application[];
 }
 export default Genre;

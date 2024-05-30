@@ -32,7 +32,7 @@ const createPermissionController = async (
       description: description,
     };
 
-    await Permission.create(newPermission);
+    await db.Permission.create(newPermission);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -54,7 +54,7 @@ const editPermissionController = async (
       description: description,
     };
 
-    await Permission.update(newPermission, {
+    await db.Permission.update(newPermission, {
       where: {
         id: id,
       },
@@ -73,7 +73,7 @@ const deletePermissionController = async (
   try {
     const id: string = req.body.id;
 
-    await Permission.destroy({
+    await db.Permission.destroy({
       where: {
         id: id,
       },
@@ -91,7 +91,7 @@ const getPermissionByIdConroller = async (
 ): Promise<void> => {
   try {
     const id: string = req.params.id;
-    const permission: Permission | null = await Permission.findOne({
+    const permission: Permission | null = await db.Permission.findOne({
       attributes: ["name", "versionId", "description"],
       where: {
         id: id,

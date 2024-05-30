@@ -18,7 +18,7 @@ const getAllUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const users: User[] = await User.findAll({
+    const users: User[] = await db.User.findAll({
       attributes: ["id", "name", "email", "createdAt", "updatedAt"],
       raw: true,
     });
@@ -46,7 +46,7 @@ const createUserController = async (
       roleId: roleId,
     };
 
-    await User.create(newUser);
+    await db.User.create(newUser);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -60,7 +60,7 @@ const deleteUserController = async (
 ): Promise<void> => {
   try {
     const userId: number = req.body.userId;
-    await User.destroy({
+    await db.User.destroy({
       where: {
         id: userId,
       },
