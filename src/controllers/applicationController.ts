@@ -1,16 +1,19 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import ApplicationModel from "../models/applicationModel";
+import Application from "../models/applicationModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import { getGenreIdByName } from "../helper/genreHelper";
 import { IApplicationReqBody } from "../types/application";
 import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
+import User from "../models/userModel";
+import Genre from "../models/genreModel";
+import Category from "../models/categoryModel";
 const getAllApplicationController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allApplications: ApplicationModel[] = await ApplicationModel.findAll({
+    const allApplications: Application[] = await Application.findAll({
       attributes: ["name", "description", "categoryId", "genreId"],
     });
     res.json({ success: 1, result: allApplications });
@@ -42,7 +45,7 @@ const createApplicationController = async (
       return;
     }
 
-    const newApplication: InferCreationAttributes<ApplicationModel> = {
+    const newApplication: InferCreationAttributes<Application> = {
       id: undefined, //if type of this obj is not of infer then no need to pass
       name: name,
       developerId: developerId,
@@ -51,7 +54,7 @@ const createApplicationController = async (
       genreId: genreId,
     };
 
-    await ApplicationModel.create(newApplication);
+    await Application.create(newApplication);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -80,7 +83,7 @@ const editApplicationController = async (
       return;
     }
 
-    const newApplication: InferCreationAttributes<ApplicationModel> = {
+    const newApplication: InferCreationAttributes<Application> = {
       id: undefined, //if type of this obj is not of infer then no need to pass
       name: name,
       developerId: developerId,
@@ -89,7 +92,7 @@ const editApplicationController = async (
       genreId: genreId,
     };
 
-    await ApplicationModel.update(newApplication, {
+    await Application.update(newApplication, {
       where: {
         id: id,
       },
@@ -108,19 +111,18 @@ const getApplicationById = async (
 ): Promise<void> => {
   try {
     const id: string = req.params.id;
-    const applicationDetail: ApplicationModel | null =
-      await ApplicationModel.findOne({
-        attributes: [
-          "name",
-          "description",
-          "developerId",
-          "categoryId",
-          "genreId",
-        ],
-        where: {
-          id: id,
-        },
-      });
+    const applicationDetail: Application | null = await Application.findOne({
+      attributes: [
+        "name",
+        "description",
+        "developerId",
+        "categoryId",
+        "genreId",
+      ],
+      where: {
+        id: id,
+      },
+    });
 
     res.json({ success: 1, result: applicationDetail });
   } catch (error) {
@@ -136,12 +138,44 @@ const deleteApplicationController = async (
   try {
     const id: string = req.body.id;
 
-    await ApplicationModel.destroy({
+    await Application.destroy({
       where: {
         id: id,
       },
     });
     res.json({ success: 1 });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+
+const getApplicationByUserController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId: number = 1;
+    const result = await Application.findAll({
+      attributes: ["name", "description"],
+      where: {
+        developerId: userId,
+      },
+      include: [
+        {
+          model: User,
+          attributes: [
+            ["name", "username"],
+            ["email", "userEmail"],
+          ],
+        },
+        { model: Genre, attributes: ["genre"] },
+        { model: Category, attributes: ["category"] },
+      ],
+      raw: true,
+    });
+
+    res.json({ success: 1, result: result });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
@@ -154,4 +188,5 @@ export {
   editApplicationController,
   getApplicationById,
   deleteApplicationController,
+  getApplicationByUserController,
 };

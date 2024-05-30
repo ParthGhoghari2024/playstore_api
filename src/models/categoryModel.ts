@@ -1,4 +1,5 @@
 import {
+  Association,
   CreationOptional,
   DataTypes,
   InferAttributes,
@@ -7,16 +8,16 @@ import {
   Sequelize,
 } from "sequelize";
 import connection from "../config/dbConnect";
+import ApplicationModel from "./applicationModel";
 
-export default class CategoryModel extends Model<
-  InferAttributes<CategoryModel>,
-  InferCreationAttributes<CategoryModel>
+export default class Category extends Model<
+  InferAttributes<Category>,
+  InferCreationAttributes<Category>
 > {
   declare id: CreationOptional<number>;
   declare category: string;
 }
-
-CategoryModel.init(
+Category.init(
   {
     id: {
       type: DataTypes.INTEGER,

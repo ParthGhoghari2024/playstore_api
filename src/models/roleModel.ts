@@ -15,15 +15,15 @@ interface RoleAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export default class RoleModel
-  extends Model<InferAttributes<RoleModel>, InferCreationAttributes<RoleModel>>
+export default class Role
+  extends Model<InferAttributes<Role>, InferCreationAttributes<Role>>
   implements RoleAttributes
 {
   declare id: CreationOptional<number>;
   declare role: string;
 }
 
-RoleModel.init(
+Role.init(
   {
     id: {
       type: DataTypes.INTEGER,

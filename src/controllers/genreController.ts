@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 
 import { logger } from "../utils/pino";
 import { IGenre } from "../types/categoryANDGenre";
-import GenreModel from "../models/genreModel";
-import CategoryModel from "../models/categoryModel";
+import Genre from "../models/genreModel";
+import Category from "../models/categoryModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 const createGenreController = async (
   req: Request,
@@ -23,7 +23,7 @@ const createGenreController = async (
       categoryId: categoryId!,
     };
 
-    await GenreModel.create(newGenre);
+    await Genre.create(newGenre);
     res.json({ success: 1 });
   } catch (error) {
     logger.error(error);
@@ -35,7 +35,7 @@ const getAllGenreController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allGenres: GenreModel[] = await GenreModel.findAll({
+    const allGenres: Genre[] = await Genre.findAll({
       attributes: ["genre", "categoryId"], //TODO: join the table and return category name instead of id
     });
 
@@ -55,7 +55,7 @@ const editGenreByIdController = async (
     const category: string = req.body.category;
     const id: string = req.body.id;
 
-    const categoryId: CategoryModel | null = await CategoryModel.findOne({
+    const categoryId: Category | null = await Category.findOne({
       attributes: ["id"],
       raw: true,
       where: {
@@ -68,7 +68,7 @@ const editGenreByIdController = async (
       categoryId: categoryId!.id!,
     };
 
-    await GenreModel.update(newGenre, {
+    await Genre.update(newGenre, {
       where: {
         id: id,
       },
@@ -85,7 +85,7 @@ const deleteGenereById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.body.id;
 
-    await GenreModel.destroy({
+    await Genre.destroy({
       where: {
         id: id,
       },

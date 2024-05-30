@@ -6,10 +6,13 @@ import {
   Model,
 } from "sequelize";
 import connection from "../config/dbConnect";
+import UserModel from "./userModel";
+import CategoryModel from "./categoryModel";
+import GenreModel from "./genreModel";
 
-export default class ApplicationModel extends Model<
-  InferAttributes<ApplicationModel>,
-  InferCreationAttributes<ApplicationModel>
+export default class Application extends Model<
+  InferAttributes<Application>,
+  InferCreationAttributes<Application>
 > {
   declare id: CreationOptional<number>;
   declare name: string;
@@ -19,7 +22,7 @@ export default class ApplicationModel extends Model<
   declare genreId: number;
 }
 
-ApplicationModel.init(
+Application.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -34,7 +37,7 @@ ApplicationModel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "UserModel",
+        model: UserModel,
         key: "id",
       },
     },
@@ -46,7 +49,7 @@ ApplicationModel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "categoryModel",
+        model: CategoryModel,
         key: "id",
       },
     },
@@ -54,7 +57,7 @@ ApplicationModel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "GenreModel",
+        model: GenreModel,
         key: "id",
       },
     },
@@ -66,3 +69,25 @@ ApplicationModel.init(
     sequelize: connection,
   }
 );
+
+UserModel.hasMany(Application, {
+  foreignKey: "developerId",
+});
+Application.belongsTo(UserModel, {
+  foreignKey: "developerId",
+});
+
+Application.belongsTo(GenreModel, {
+  foreignKey: "genreId",
+});
+GenreModel.hasMany(Application, {
+  foreignKey: "genreId",
+});
+
+Application.belongsTo(CategoryModel, {
+  foreignKey: "categoryId",
+});
+
+CategoryModel.hasMany(Application, {
+  foreignKey: "categoryId",
+});

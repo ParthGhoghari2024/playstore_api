@@ -7,6 +7,7 @@ import {
   Sequelize,
 } from "sequelize";
 import connection from "../config/dbConnect";
+import ApplicationModel from "./applicationModel";
 
 export interface IUserAttributes {
   id?: number;
@@ -17,9 +18,9 @@ export interface IUserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export default class UserModel extends Model<
-  InferAttributes<UserModel>,
-  InferCreationAttributes<UserModel>
+export default class User extends Model<
+  InferAttributes<User>,
+  InferCreationAttributes<User>
 > {
   declare id: CreationOptional<number>;
   declare name: string;
@@ -27,7 +28,7 @@ export default class UserModel extends Model<
   declare roleId: number;
 }
 
-UserModel.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,

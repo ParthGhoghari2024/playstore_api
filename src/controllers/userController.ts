@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-// import { userModel, UserAttributes } from "../models/userModel";
+// import { User, UserAttributes } from "../models/User";
 
 import { logger } from "../utils/pino";
 import { IUser } from "../types/user";
-import UserModel, { IUserAttributes } from "../models/userModel";
+import User, { IUserAttributes } from "../models/userModel";
 import { InferAttributes } from "sequelize";
 
 interface IError extends Error {
@@ -17,7 +17,7 @@ const getAllUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const users: UserModel[] = await UserModel.findAll({
+    const users: User[] = await User.findAll({
       attributes: ["id", "name2", "email", "createdAt", "updatedAt"],
       raw: true,
     });
@@ -45,7 +45,7 @@ const createUserController = async (
       roleId: roleId,
     };
 
-    await UserModel.create(newUser);
+    await User.create(newUser);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -59,7 +59,7 @@ const deleteUserController = async (
 ): Promise<void> => {
   try {
     const userId: number = req.body.userId;
-    await UserModel.destroy({
+    await User.destroy({
       where: {
         id: userId,
       },

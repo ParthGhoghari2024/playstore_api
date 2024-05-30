@@ -2,18 +2,19 @@ import { Request, Response } from "express";
 
 import { ICategory } from "../types/categoryANDGenre";
 import { logger } from "../utils/pino";
-import CategoryModel from "../models/categoryModel";
+import Category from "../models/categoryModel";
 
 const createCategoryController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
+    const category: string = req.body.category;
     const newCategory: ICategory = {
-      category: req.body.category,
+      category,
     };
 
-    await CategoryModel.create(newCategory);
+    await Category.create(newCategory);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -25,7 +26,7 @@ const getAllCategoryController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const allCategories: CategoryModel[] = await CategoryModel.findAll({
+    const allCategories: Category[] = await Category.findAll({
       attributes: ["category"],
     });
 
@@ -43,7 +44,7 @@ const getCategoryByIdController = async (
   try {
     const id: string = req.params.id;
 
-    const category: CategoryModel | null = await CategoryModel.findOne({
+    const category: Category | null = await Category.findOne({
       attributes: ["category"],
       where: {
         id: id,
@@ -64,7 +65,7 @@ const editCategoryByIdController = async (
   try {
     const { id, category } = req.body;
 
-    await CategoryModel.update(
+    await Category.update(
       {
         category: category,
       },
@@ -88,7 +89,7 @@ const deleteCategoryByIdController = async (
 ): Promise<void> => {
   try {
     const id: string = req.body.id;
-    await CategoryModel.destroy({
+    await Category.destroy({
       where: {
         id: id,
       },

@@ -17,9 +17,9 @@ export interface IVersionAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export default class VersionModel extends Model<
-  InferAttributes<VersionModel>,
-  InferCreationAttributes<VersionModel>
+export default class Version extends Model<
+  InferAttributes<Version>,
+  InferCreationAttributes<Version>
 > {
   declare id: CreationOptional<number>;
   declare applicationId: number;
@@ -27,7 +27,7 @@ export default class VersionModel extends Model<
   declare version: string;
 }
 
-VersionModel.init(
+Version.init(
   {
     id: {
       type: DataTypes.INTEGER,

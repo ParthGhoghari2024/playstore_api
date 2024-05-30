@@ -17,9 +17,9 @@ export interface IPermissionAttributes {
   deletedAt?: Date;
 }
 
-export default class PermissionModel extends Model<
-  InferAttributes<PermissionModel>,
-  InferCreationAttributes<PermissionModel>
+export default class Permission extends Model<
+  InferAttributes<Permission>,
+  InferCreationAttributes<Permission>
 > {
   declare id: CreationOptional<number>;
   declare name: string;
@@ -27,7 +27,7 @@ export default class PermissionModel extends Model<
   declare description: string;
 }
 
-PermissionModel.init(
+Permission.init(
   {
     id: {
       type: DataTypes.INTEGER,

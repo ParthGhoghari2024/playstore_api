@@ -7,17 +7,18 @@ import {
   Sequelize,
 } from "sequelize";
 import connection from "../config/dbConnect";
+import ApplicationModel from "./applicationModel";
 
-export default class GenreModel extends Model<
-  InferAttributes<GenreModel>,
-  InferCreationAttributes<GenreModel>
+export default class Genre extends Model<
+  InferAttributes<Genre>,
+  InferCreationAttributes<Genre>
 > {
   declare id: CreationOptional<number>;
   declare genre: string;
   declare categoryId: number;
 }
 
-GenreModel.init(
+Genre.init(
   {
     id: {
       type: DataTypes.INTEGER,
