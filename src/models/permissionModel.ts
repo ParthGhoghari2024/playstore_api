@@ -1,60 +1,58 @@
-import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-} from "sequelize";
 import connection from "../config/dbConnect";
+import {
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import { DataTypes, Optional } from "sequelize";
+import Version from "./versionModel";
 
 export interface IPermissionAttributes {
   id?: number;
   name: string;
   versionId: number;
   description: string;
+}
+
+interface IPermissionCreationAttributes
+  extends Optional<IPermissionAttributes, "id"> {}
+@Table({ tableName: "permissions" })
+class Permission extends Model<
+  IPermissionAttributes,
+  IPermissionCreationAttributes
+> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  name!: string;
+
+  @AllowNull(false)
+  @ForeignKey(() => Version)
+  @Column({ type: DataType.INTEGER })
+  versionId!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.TEXT })
+  description!: string;
+
+  @CreatedAt
   createdAt?: Date;
+  @UpdatedAt
   updatedAt?: Date;
+  @DeletedAt
   deletedAt?: Date;
 }
 
-export default class Permission extends Model<
-  InferAttributes<Permission>,
-  InferCreationAttributes<Permission>
-> {
-  declare id: CreationOptional<number>;
-  declare name: string;
-  declare versionId: number;
-  declare description: string;
-}
-
-Permission.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    versionId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "VersionModel",
-        key: "id",
-      },
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "permissions",
-    sequelize: connection,
-  }
-);
+export default Permission;

@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import Version, { IVersionAttributes } from "../models/versionModel";
 import { IVersionReqBody } from "../types/version";
+import db from "../models";
+
 const getAllVersionController = async (
   req: Request,
   res: Response

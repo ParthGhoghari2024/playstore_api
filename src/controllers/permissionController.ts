@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import { IPermissionReqBody } from "../types/permission";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
-
+import db from "../models";
 const getAllPermissionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allPermissions: Permission[] = await Permission.findAll({
+    const allPermissions: Permission[] = await db.Permission.findAll({
       attributes: ["name", "versionId", "description"],
     });
 

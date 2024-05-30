@@ -1,93 +1,91 @@
+import { Optional } from "sequelize";
 import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
+  ForeignKey,
   Model,
-} from "sequelize";
-import connection from "../config/dbConnect";
-import UserModel from "./userModel";
-import CategoryModel from "./categoryModel";
-import GenreModel from "./genreModel";
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import User from "./userModel";
+import Category from "./categoryModel";
+import Genre from "./genreModel";
+export interface IApplicationAttributes {
+  id?: number;
+  name: string;
+  developerId: number;
+  description: string;
+  categoryId: number;
+  genreId: number;
+}
+export interface IApplicationCreationAttributes
+  extends Optional<IApplicationAttributes, "id"> {}
 
-export default class Application extends Model<
-  InferAttributes<Application>,
-  InferCreationAttributes<Application>
+@Table({ tableName: "applications" })
+class Application extends Model<
+  IApplicationAttributes,
+  IApplicationCreationAttributes
 > {
-  declare id: CreationOptional<number>;
-  declare name: string;
-  declare developerId: number;
-  declare description: string;
-  declare categoryId: number;
-  declare genreId: number;
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  name!: string;
+
+  @AllowNull(false)
+  @ForeignKey(() => User)
+  @Column({ type: DataType.INTEGER })
+  developerId!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.TEXT })
+  description!: string;
+
+  @AllowNull(false)
+  @ForeignKey(() => Category)
+  @Column({ type: DataType.INTEGER })
+  categoryId!: number;
+
+  @AllowNull(false)
+  @ForeignKey(() => Genre)
+  @Column({ type: DataType.INTEGER })
+  genreId!: number;
+
+  @CreatedAt
+  createdAt?: Date;
+  @UpdatedAt
+  updatedAt?: Date;
+  @DeletedAt
+  deletedAt?: Date;
 }
 
-Application.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    developerId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: UserModel,
-        key: "id",
-      },
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: CategoryModel,
-        key: "id",
-      },
-    },
-    genreId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: GenreModel,
-        key: "id",
-      },
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "applications",
-    sequelize: connection,
-  }
-);
+// UserModel.hasMany(Application, {
+//   foreignKey: "developerId",
+// });
+// Application.belongsTo(UserModel, {
+//   foreignKey: "developerId",
+// });
 
-UserModel.hasMany(Application, {
-  foreignKey: "developerId",
-});
-Application.belongsTo(UserModel, {
-  foreignKey: "developerId",
-});
+// Application.belongsTo(GenreModel, {
+//   foreignKey: "genreId",
+// });
+// GenreModel.hasMany(Application, {
+//   foreignKey: "genreId",
+// });
 
-Application.belongsTo(GenreModel, {
-  foreignKey: "genreId",
-});
-GenreModel.hasMany(Application, {
-  foreignKey: "genreId",
-});
+// Application.belongsTo(CategoryModel, {
+//   foreignKey: "categoryId",
+// });
 
-Application.belongsTo(CategoryModel, {
-  foreignKey: "categoryId",
-});
-
-CategoryModel.hasMany(Application, {
-  foreignKey: "categoryId",
-});
+// CategoryModel.hasMany(Application, {
+//   foreignKey: "categoryId",
+// });
+export default Application;

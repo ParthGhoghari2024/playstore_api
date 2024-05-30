@@ -1,47 +1,48 @@
-import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  Sequelize,
-} from "sequelize";
 import connection from "../config/dbConnect";
-import ApplicationModel from "./applicationModel";
+import {
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import { DataTypes, Optional } from "sequelize";
+import Category from "./categoryModel";
 
-export default class Genre extends Model<
-  InferAttributes<Genre>,
-  InferCreationAttributes<Genre>
-> {
-  declare id: CreationOptional<number>;
-  declare genre: string;
-  declare categoryId: number;
+export interface IGenreAttributes {
+  id?: number;
+  genre: string;
+  categoryId: number;
 }
 
-Genre.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    genre: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "UserModel",
-        key: "id",
-      },
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "genres",
-    sequelize: connection,
-  }
-);
+interface IGenreCreationAttributes extends Optional<IGenreAttributes, "id"> {}
+@Table({ tableName: "genres" })
+class Genre extends Model<IGenreAttributes, IGenreCreationAttributes> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  genre!: string;
+
+  @AllowNull(false)
+  @ForeignKey(() => Category)
+  @Column({ type: DataType.INTEGER })
+  categoryId!: number;
+
+  @CreatedAt
+  createdAt?: Date;
+  @UpdatedAt
+  updatedAt?: Date;
+  @DeletedAt
+  deletedAt?: Date;
+}
+export default Genre;

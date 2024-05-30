@@ -1,44 +1,44 @@
+import { DataTypes, Optional } from "sequelize";
+import db from ".";
 import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
   Model,
-  Sequelize,
-} from "sequelize";
-import connection from "../config/dbConnect";
-
-interface RoleAttributes {
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+interface IRoleAttributes {
   id?: number;
   role: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export default class Role
-  extends Model<InferAttributes<Role>, InferCreationAttributes<Role>>
-  implements RoleAttributes
-{
-  declare id: CreationOptional<number>;
-  declare role: string;
+
+interface IRoleCreationAttributes extends Optional<IRoleAttributes, "id"> {}
+
+@Table({ tableName: "roles" })
+class Role extends Model<IRoleAttributes, IRoleCreationAttributes> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  role!: string;
+
+  @CreatedAt
+  createdAt?: Date;
+  @UpdatedAt
+  updatedAt?: Date;
+  @DeletedAt
+  deletedAt?: Date;
 }
 
-Role.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    role: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "roles",
-    sequelize: connection,
-  }
-);
+export default Role;

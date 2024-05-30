@@ -1,38 +1,42 @@
 import {
-  Association,
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
   Model,
-  Sequelize,
-} from "sequelize";
-import connection from "../config/dbConnect";
-import ApplicationModel from "./applicationModel";
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import { DataTypes, Optional } from "sequelize";
 
-export default class Category extends Model<
-  InferAttributes<Category>,
-  InferCreationAttributes<Category>
-> {
-  declare id: CreationOptional<number>;
-  declare category: string;
+export interface ICategoryAttributes {
+  id?: number;
+  category: string;
 }
-Category.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    category: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "categories",
-    sequelize: connection,
-  }
-);
+
+interface ICategoryCreationAttributes
+  extends Optional<ICategoryAttributes, "id"> {}
+
+@Table({ tableName: "categories" })
+class Category extends Model<ICategoryAttributes, ICategoryCreationAttributes> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  category!: string;
+
+  @CreatedAt
+  createdAt?: Date;
+  @UpdatedAt
+  updatedAt?: Date;
+  @DeletedAt
+  deletedAt?: Date;
+}
+
+export default Category;

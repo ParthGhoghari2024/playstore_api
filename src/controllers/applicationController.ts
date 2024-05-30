@@ -1,19 +1,22 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import Application from "../models/applicationModel";
+import Application, {
+  IApplicationAttributes,
+  IApplicationCreationAttributes,
+} from "../models/applicationModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import { getGenreIdByName } from "../helper/genreHelper";
 import { IApplicationReqBody } from "../types/application";
-import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
-import User from "../models/userModel";
-import Genre from "../models/genreModel";
-import Category from "../models/categoryModel";
+
+import db from "../models";
+import { NullishPropertiesOf } from "sequelize/types/utils";
+import { InferAttributes, InferCreationAttributes } from "sequelize";
 const getAllApplicationController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allApplications: Application[] = await Application.findAll({
+    const allApplications: Application[] = await db.Application.findAll({
       attributes: ["name", "description", "categoryId", "genreId"],
     });
     res.json({ success: 1, result: allApplications });
@@ -45,8 +48,7 @@ const createApplicationController = async (
       return;
     }
 
-    const newApplication: InferCreationAttributes<Application> = {
-      id: undefined, //if type of this obj is not of infer then no need to pass
+    const newApplication: IApplicationAttributes = {
       name: name,
       developerId: developerId,
       description: description,
@@ -54,7 +56,7 @@ const createApplicationController = async (
       genreId: genreId,
     };
 
-    await Application.create(newApplication);
+    await db.Application.create(newApplication);
 
     res.json({ success: 1 });
   } catch (error) {
@@ -83,8 +85,7 @@ const editApplicationController = async (
       return;
     }
 
-    const newApplication: InferCreationAttributes<Application> = {
-      id: undefined, //if type of this obj is not of infer then no need to pass
+    const newApplication: IApplicationAttributes = {
       name: name,
       developerId: developerId,
       description: description,
@@ -163,14 +164,14 @@ const getApplicationByUserController = async (
       },
       include: [
         {
-          model: User,
+          model: db.User,
           attributes: [
             ["name", "username"],
             ["email", "userEmail"],
           ],
         },
-        { model: Genre, attributes: ["genre"] },
-        { model: Category, attributes: ["category"] },
+        { model: db.Genre, attributes: ["genre"] },
+        { model: db.Category, attributes: ["category"] },
       ],
       raw: true,
     });

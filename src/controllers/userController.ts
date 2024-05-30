@@ -5,6 +5,7 @@ import { logger } from "../utils/pino";
 import { IUser } from "../types/user";
 import User, { IUserAttributes } from "../models/userModel";
 import { InferAttributes } from "sequelize";
+import db from "../models";
 
 interface IError extends Error {
   parent: {
@@ -18,7 +19,7 @@ const getAllUserController = async (
 ): Promise<void> => {
   try {
     const users: User[] = await User.findAll({
-      attributes: ["id", "name2", "email", "createdAt", "updatedAt"],
+      attributes: ["id", "name", "email", "createdAt", "updatedAt"],
       raw: true,
     });
 

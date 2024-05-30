@@ -1,13 +1,20 @@
-import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  Sequelize,
-} from "sequelize";
+import { DataTypes, Optional } from "sequelize";
 import connection from "../config/dbConnect";
 import ApplicationModel from "./applicationModel";
+import {
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import Role from "./roleModel";
 
 export interface IUserAttributes {
   id?: number;
@@ -18,44 +25,34 @@ export interface IUserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export default class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
-> {
-  declare id: CreationOptional<number>;
-  declare name: string;
-  declare email: string;
-  declare roleId: number;
+
+interface IUserCreationAttributes extends Optional<IUserAttributes, "id"> {}
+@Table({ tableName: "users" })
+class User extends Model<IUserAttributes, IUserCreationAttributes> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  name!: string;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  email!: string;
+
+  @AllowNull(false)
+  @ForeignKey(() => Role)
+  @Column({ type: DataType.INTEGER })
+  roleId!: number;
+
+  @CreatedAt
+  createdAt?: Date;
+  @UpdatedAt
+  updatedAt?: Date;
+  @DeletedAt
+  deletedAt?: Date;
 }
 
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    roleId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "RoleModel",
-        key: "id",
-      },
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "users",
-    sequelize: connection,
-  }
-);
+export default User;

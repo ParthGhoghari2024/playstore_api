@@ -1,13 +1,18 @@
+import { DataTypes, Optional } from "sequelize";
 import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
+  AllowNull,
+  AutoIncrement,
+  Column,
+  CreatedAt,
+  DataType,
+  DeletedAt,
+  ForeignKey,
   Model,
-  Sequelize,
-} from "sequelize";
-import connection from "../config/dbConnect";
-
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from "sequelize-typescript";
+import Application from "./applicationModel";
 export interface IVersionAttributes {
   id?: number;
   applicationId: number;
@@ -17,44 +22,36 @@ export interface IVersionAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export default class Version extends Model<
-  InferAttributes<Version>,
-  InferCreationAttributes<Version>
-> {
-  declare id: CreationOptional<number>;
-  declare applicationId: number;
-  declare description: string;
-  declare version: string;
+
+interface IVersionCreationAttributes
+  extends Optional<IVersionAttributes, "id"> {}
+
+@Table({ tableName: "versions" })
+class Version extends Model<IVersionAttributes, IVersionCreationAttributes> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({ type: DataType.INTEGER })
+  id!: number;
+
+  @AllowNull(false)
+  @ForeignKey(() => Application)
+  @Column({ type: DataType.INTEGER })
+  applicationId!: number;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  version!: string;
+
+  @AllowNull(false)
+  @Column({ type: DataType.TEXT })
+  description!: string;
+
+  @CreatedAt
+  createdAt?: Date;
+  @UpdatedAt
+  updatedAt?: Date;
+  @DeletedAt
+  deletedAt?: Date;
 }
 
-Version.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    applicationId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "ApplicationModel",
-        key: "id",
-      },
-    },
-    version: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-  },
-  {
-    timestamps: true,
-    paranoid: true,
-    tableName: "versions",
-    sequelize: connection,
-  }
-);
+export default Version;
