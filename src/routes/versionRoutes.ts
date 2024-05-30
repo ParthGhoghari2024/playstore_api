@@ -20,6 +20,6 @@ router.route("/").post(createVersionMiddleware, createVersionController);
 router.route("/:id").get(getVersionById);
 router.route("/edit").post(editVersionMiddleware, editVersionController);
 router.route("/delete").post(deleteVersionMiddleware, deleteVersionController);
-router.route("/app/").post(getAppVersionsController);
+router.route("/app/:appId").get(getAppVersionsController);
 
 export default router;

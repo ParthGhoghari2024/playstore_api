@@ -2,15 +2,12 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import Application, {
   IApplicationAttributes,
-  IApplicationCreationAttributes,
 } from "../models/applicationModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import { getGenreIdByName } from "../helper/genreHelper";
 import { IApplicationReqBody } from "../types/application";
 
 import db from "../models";
-import { NullishPropertiesOf } from "sequelize/types/utils";
-import { InferAttributes, InferCreationAttributes } from "sequelize";
 const getAllApplicationController = async (
   req: Request,
   res: Response

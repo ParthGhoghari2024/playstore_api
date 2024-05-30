@@ -19,7 +19,7 @@ const createPermissionMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -46,7 +46,7 @@ const editPermissionMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -70,7 +70,7 @@ const deletePermissionMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();

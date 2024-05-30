@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 
 import { logger } from "../utils/pino";
-import { ICategory, IGenre } from "../types/categoryANDGenre";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import db from "../models";
 import Genre, { IGenreAttributes } from "../models/genreModel";

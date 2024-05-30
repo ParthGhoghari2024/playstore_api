@@ -17,7 +17,7 @@ const createCategoryMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -43,8 +43,9 @@ const editCategoryMiddleware = async (
         abortEarly: false,
       }
     );
+
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -68,7 +69,7 @@ const deleteCategoryMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();

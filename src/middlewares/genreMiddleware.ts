@@ -19,7 +19,7 @@ const createGenreMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -47,7 +47,7 @@ const editGenreMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -73,7 +73,7 @@ const deleteGenreMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();

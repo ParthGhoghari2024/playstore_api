@@ -20,7 +20,7 @@ const createApplicationMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -48,7 +48,7 @@ const editApplicationMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -72,7 +72,7 @@ const deleteApplicationMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();

@@ -19,7 +19,7 @@ const createUserMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -45,7 +45,7 @@ const deleteUserMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();

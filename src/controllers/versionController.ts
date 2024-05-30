@@ -114,7 +114,7 @@ const getAppVersionsController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const appId: number = req.body.appId;
+    const appId: string = req.params.appId;
     const appVersions = await db.Version.findAll({
       attributes: ["version", "description"],
       where: {

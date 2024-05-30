@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import db from "../models";
 import Category, { ICategoryAttributes } from "../models/categoryModel";
+import { ICategory } from "../types/categoryANDGenre";
 
 const createCategoryController = async (
   req: Request,
@@ -62,7 +63,7 @@ const editCategoryByIdController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id, category } = req.body;
+    const { id, category }: ICategory = req.body;
 
     await db.Category.update(
       {

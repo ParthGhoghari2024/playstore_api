@@ -50,7 +50,7 @@ const editVersionMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();
@@ -76,7 +76,7 @@ const deleteVersionMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      res.json({ success: 0, error: error?.details });
       return;
     }
     next();

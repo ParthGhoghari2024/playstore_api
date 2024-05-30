@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 // import { User, UserAttributes } from "../models/User";
 
-import { logger } from "../utils/pino";
-import { IUser } from "../types/user";
 import User, { IUserAttributes } from "../models/userModel";
-import { InferAttributes } from "sequelize";
 import db from "../models";
+import { logger } from "../utils/pino";
 
 interface IError extends Error {
   parent: {
@@ -28,7 +26,7 @@ const getAllUserController = async (
     if (error instanceof Error) {
       const IErrorInstance = error as IError;
       if (error.name === "SequelizeDatabaseError") {
-        console.log(IErrorInstance.parent.sqlMessage);
+        logger.error(IErrorInstance.parent.sqlMessage);
       }
     }
   }
@@ -50,7 +48,7 @@ const createUserController = async (
 
     res.json({ success: 1 });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -68,7 +66,7 @@ const deleteUserController = async (
 
     res.json({ success: 1 });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 export { getAllUserController, createUserController, deleteUserController };
