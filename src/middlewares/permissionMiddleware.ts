@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as Joi from "joi";
 import { logger } from "../utils/pino";
+import db from "../models";
 
 const createPermissionSchema: Joi.ObjectSchema = Joi.object({
   name: Joi.string().required().max(255),
@@ -78,6 +79,7 @@ const deletePermissionMiddleware = async (
     logger.error(error);
   }
 };
+
 export {
   createPermissionMiddleware,
   editPermissionMiddleware,

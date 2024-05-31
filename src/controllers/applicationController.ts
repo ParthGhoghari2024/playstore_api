@@ -153,21 +153,25 @@ const getApplicationByUserController = async (
 ): Promise<void> => {
   try {
     const userId: number = 1;
-    const result = await Application.findAll({
-      attributes: ["name", "description"],
+    const result: Application[] = await Application.findAll({
+      attributes: [
+        "name",
+        "description",
+        [db.sequelize.col("developer.name"), "developerName"],
+        [db.sequelize.col("developer.email"), "developerEmail"],
+        [db.sequelize.col("genre.genre"), "genre"],
+        [db.sequelize.col("category.category"), "category"],
+      ],
       where: {
         developerId: userId,
       },
       include: [
         {
           model: db.User,
-          attributes: [
-            ["name", "username"],
-            ["email", "userEmail"],
-          ],
+          attributes: [],
         },
-        { model: db.Genre, attributes: ["genre"] },
-        { model: db.Category, attributes: ["category"] },
+        { model: db.Genre, attributes: [] },
+        { model: db.Category, attributes: [] },
       ],
       raw: true,
     });
@@ -190,7 +194,6 @@ const getApplicationByGenre = async (
       res.json({ success: 0, error: "Wrong Genre" });
       return;
     }
-
     const applications: Application[] = await db.Application.findAll({
       attributes: ["name", "description"],
       where: {

@@ -12,6 +12,7 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
 import Role from "./roleModel";
@@ -36,10 +37,12 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   id!: number;
 
   @AllowNull(false)
+  @Unique(true)
   @Column({ type: DataType.STRING(255) })
   name!: string;
 
   @AllowNull(false)
+  @Unique(true)
   @Column({ type: DataType.STRING(255) })
   email!: string;
 

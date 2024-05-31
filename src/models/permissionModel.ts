@@ -1,6 +1,7 @@
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -52,6 +53,9 @@ class Permission extends Model<
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @BelongsTo(() => Version, "versionId")
+  version!: Version;
 }
 
 export default Permission;

@@ -8,12 +8,14 @@ import {
   DataType,
   DeletedAt,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
 import Application from "./applicationModel";
+import Permission from "./permissionModel";
 export interface IVersionAttributes {
   id?: number;
   applicationId: number;
@@ -56,6 +58,9 @@ class Version extends Model<IVersionAttributes, IVersionCreationAttributes> {
 
   @BelongsTo(() => Application, "applicationId")
   application!: Application;
+
+  @HasMany(() => Permission, "versionId")
+  permission!: Permission[];
 }
 
 export default Version;

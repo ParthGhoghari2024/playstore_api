@@ -115,8 +115,15 @@ const getAppVersionsController = async (
 ): Promise<void> => {
   try {
     const appId: string = req.params.appId;
-    const appVersions = await db.Version.findAll({
-      attributes: ["version", "description"],
+    const appVersions: Version[] = await db.Version.findAll({
+      attributes: [
+        "version",
+        "description",
+        [db.sequelize.col("application.name"), "appName"],
+        [db.sequelize.col("application.description"), "appDescription"],
+        [db.sequelize.col("application.category.category"), "category"],
+        [db.sequelize.col("application.genre.genre"), "genre"],
+      ],
       where: {
         applicationId: appId,
       },
@@ -124,15 +131,15 @@ const getAppVersionsController = async (
         {
           model: db.Application,
           foreignKey: "applicationId",
-          attributes: ["name", "description"],
+          attributes: [],
           include: [
             {
               model: db.Category,
-              attributes: ["category"],
+              attributes: [],
             },
             {
               model: db.Genre,
-              attributes: ["genre"],
+              attributes: [],
             },
           ],
         },

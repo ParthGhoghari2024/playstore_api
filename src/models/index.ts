@@ -20,6 +20,6 @@ let sequelize: Sequelize = new Sequelize(
 
 sequelize.addModels(Object.values(models));
 
-const db = { sequelize, ...models };
+const db = { sequelize, Sequelize, ...models };
 
 export default db;

@@ -104,10 +104,41 @@ const getPermissionByIdConroller = async (
     res.json({ success: 0 });
   }
 };
+
+const getPermissionsByVersion = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const versionId: string = req.params.versionId;
+    const permisions: Permission[] = await db.Permission.findAll({
+      raw: true,
+      attributes: [
+        "name",
+        "description",
+        [db.sequelize.col("version.version"), "versionName"],
+        [db.sequelize.col("version.description"), "versionDescription"],
+      ],
+      where: {
+        versionId: versionId,
+      },
+      include: {
+        model: db.Version,
+        attributes: [],
+      },
+    });
+
+    res.json({ success: 1, result: permisions });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
 export {
   createPermissionController,
   getAllPermissionController,
   editPermissionController,
   deletePermissionController,
   getPermissionByIdConroller,
+  getPermissionsByVersion,
 };
