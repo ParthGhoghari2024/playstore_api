@@ -8,14 +8,11 @@ import {
   DataType,
   DeletedAt,
   ForeignKey,
-  HasMany,
   Model,
   PrimaryKey,
   Table,
-  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
-import Role from "./roleModel";
 import Application from "./applicationModel";
 import User from "./userModel";
 
@@ -30,8 +27,17 @@ export interface IInstalledAttributes {
 
 interface IUserCreationAttributes
   extends Optional<IInstalledAttributes, "id"> {}
-@Table({ tableName: "installedApps" })
-class InstalledApps extends Model<
+@Table({
+  tableName: "installedApps",
+  indexes: [
+    {
+      name: "unique_user_app_pair",
+      unique: true,
+      fields: ["userId", "applicationId"],
+    },
+  ],
+})
+class InstalledApp extends Model<
   IInstalledAttributes,
   IUserCreationAttributes
 > {
@@ -64,4 +70,4 @@ class InstalledApps extends Model<
   application!: Application;
 }
 
-export default InstalledApps;
+export default InstalledApp;

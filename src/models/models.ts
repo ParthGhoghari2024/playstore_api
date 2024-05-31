@@ -1,7 +1,7 @@
 import Application from "./applicationModel";
 import Category from "./categoryModel";
 import Genre from "./genreModel";
-import InstalledApps from "./installedAppModel";
+import InstalledApp from "./installedAppModel";
 import Permission from "./permissionModel";
 import Role from "./roleModel";
 import User from "./userModel";
@@ -14,5 +14,5 @@ export default {
   Role,
   User,
   Version,
-  InstalledApps,
+  InstalledApp,
 };

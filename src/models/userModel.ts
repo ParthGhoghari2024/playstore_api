@@ -17,7 +17,7 @@ import {
 } from "sequelize-typescript";
 import Role from "./roleModel";
 import Application from "./applicationModel";
-import InstalledApps from "./installedAppModel";
+import InstalledApp from "./installedAppModel";
 
 export interface IUserAttributes {
   id?: number;
@@ -62,7 +62,7 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   @HasMany(() => Application, "developerId")
   application!: Application[];
 
-  @BelongsToMany(() => Application, () => InstalledApps)
+  @BelongsToMany(() => Application, () => InstalledApp)
   applications!: Application[];
 }
 
