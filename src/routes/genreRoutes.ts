@@ -13,9 +13,11 @@ import {
 
 const router: Router = express.Router();
 
-router.route("/").post(createGenreMiddleware, createGenreController);
+router
+  .route("/")
+  .post(createGenreMiddleware, createGenreController)
+  .put(editGenreMiddleware, editGenreByIdController)
+  .delete(deleteGenreMiddleware, deleteGenereById);
 router.route("/all").get(getAllGenreController);
-router.route("/edit").post(editGenreMiddleware, editGenreByIdController);
-router.route("/delete").post(deleteGenreMiddleware, deleteGenereById);
 
 export default router;

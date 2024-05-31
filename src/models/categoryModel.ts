@@ -9,10 +9,12 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
 import { DataTypes, Optional } from "sequelize";
 import Application from "./applicationModel";
+import Genre from "./genreModel";
 
 export interface ICategoryAttributes {
   id?: number;
@@ -30,6 +32,7 @@ class Category extends Model<ICategoryAttributes, ICategoryCreationAttributes> {
   id!: number;
 
   @AllowNull(false)
+  @Unique(true)
   @Column({ type: DataType.STRING(255) })
   category!: string;
 
@@ -42,6 +45,9 @@ class Category extends Model<ICategoryAttributes, ICategoryCreationAttributes> {
 
   @HasMany(() => Application, "categoryId")
   applications!: Application[];
+
+  @HasMany(() => Genre, "categoryId")
+  categories!: Genre[];
 }
 
 export default Category;

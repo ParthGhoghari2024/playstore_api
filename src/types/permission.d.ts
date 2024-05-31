@@ -4,3 +4,13 @@ export interface IPermissionReqBody {
   versionId: number;
   description: string;
 }
+
+export interface IAppIdVersionId {
+  appId?: number;
+  versionId?: number;
+}
+
+export interface IApplicationIdUserId {
+  userId?: number;
+  applicationId?: number;
+}

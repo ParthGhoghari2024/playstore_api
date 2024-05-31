@@ -37,7 +37,17 @@ const getAllGenreController = async (
 ): Promise<void> => {
   try {
     const allGenres: Genre[] = await db.Genre.findAll({
-      attributes: ["genre", "categoryId"], //TODO: join the table and return category name instead of id
+      raw: true,
+      attributes: [
+        "genre",
+        [db.sequelize.col("category.category"), "category"],
+      ],
+      include: [
+        {
+          model: db.Category,
+          attributes: [],
+        },
+      ],
     });
 
     res.json({ success: 1, result: allGenres });

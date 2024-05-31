@@ -57,7 +57,7 @@ const deleteUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId: number = req.body.userId;
+    const userId: number = req.body.id;
     await db.User.destroy({
       where: {
         id: userId,

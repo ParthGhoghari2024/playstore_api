@@ -1,5 +1,4 @@
 import GenreModel from "../models/genreModel";
-import { IId } from "../types/interface";
 import { logger } from "../utils/pino";
 
 const getGenreIdByName = async (genre: string): Promise<number | null> => {

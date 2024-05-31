@@ -2,6 +2,7 @@ import { Optional } from "sequelize";
 import {
   AllowNull,
   AutoIncrement,
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -16,6 +17,7 @@ import {
 } from "sequelize-typescript";
 import Role from "./roleModel";
 import Application from "./applicationModel";
+import InstalledApps from "./installedAppModel";
 
 export interface IUserAttributes {
   id?: number;
@@ -59,6 +61,9 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
 
   @HasMany(() => Application, "developerId")
   application!: Application[];
+
+  @BelongsToMany(() => Application, () => InstalledApps)
+  applications!: Application[];
 }
 
 export default User;

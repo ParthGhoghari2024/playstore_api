@@ -18,14 +18,10 @@ const router: Router = express.Router();
 
 router
   .route("/")
-  .post(createApplicationMiddleware, createApplicationController);
+  .post(createApplicationMiddleware, createApplicationController)
+  .put(editApplicationMiddleware, editApplicationController)
+  .delete(deleteApplicationMiddleware, deleteApplicationController);
 router.route("/all").get(getAllApplicationController);
-router
-  .route("/edit")
-  .post(editApplicationMiddleware, editApplicationController);
-router
-  .route("/delete")
-  .post(deleteApplicationMiddleware, deleteApplicationController);
 
 router.route("/byUser").get(getApplicationByUserController);
 router.route("/byGenre").post(getApplicationByGenre);

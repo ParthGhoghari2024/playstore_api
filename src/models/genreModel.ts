@@ -1,6 +1,7 @@
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -10,6 +11,7 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
 import { DataTypes, Optional } from "sequelize";
@@ -31,6 +33,7 @@ class Genre extends Model<IGenreAttributes, IGenreCreationAttributes> {
   id!: number;
 
   @AllowNull(false)
+  @Unique(true)
   @Column({ type: DataType.STRING(255) })
   genre!: string;
 
@@ -48,5 +51,8 @@ class Genre extends Model<IGenreAttributes, IGenreCreationAttributes> {
 
   @HasMany(() => Application, "genreId")
   applications!: Application[];
+
+  @BelongsTo(() => Category, "categoryId")
+  category!: Category;
 }
 export default Genre;

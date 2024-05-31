@@ -53,7 +53,9 @@ const createApplicationController = async (
       genreId: genreId,
     };
 
-    await db.Application.create(newApplication);
+    const createResult: Application = await db.Application.create(
+      newApplication
+    );
 
     res.json({ success: 1 });
   } catch (error) {
@@ -89,7 +91,7 @@ const editApplicationController = async (
       categoryId: categoryId,
       genreId: genreId,
     };
-    await db.Application.update(newApplication, {
+    const updateResult: number[] = await db.Application.update(newApplication, {
       where: {
         id: id,
       },

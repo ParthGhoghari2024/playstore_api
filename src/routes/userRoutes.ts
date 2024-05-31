@@ -11,8 +11,10 @@ import {
 
 const router: Router = express.Router();
 
-router.route("/").post(createUserMiddleware, createUserController);
-router.route("/delete").post(deleteUserMiddleware, deleteUserController);
+router
+  .route("/")
+  .post(createUserMiddleware, createUserController)
+  .delete(deleteUserMiddleware, deleteUserController);
 
 router.route("/all").get(getAllUserController);
 

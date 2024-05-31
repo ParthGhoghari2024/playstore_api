@@ -3,6 +3,7 @@ import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -18,6 +19,7 @@ import User from "./userModel";
 import Category from "./categoryModel";
 import Genre from "./genreModel";
 import Version from "./versionModel";
+import InstalledApps from "./installedAppModel";
 export interface IApplicationAttributes {
   id?: number;
   name: string;
@@ -84,6 +86,9 @@ class Application extends Model<
 
   @HasMany(() => Version, "applicationId")
   versions!: Version[];
+
+  @BelongsToMany(() => User, () => InstalledApps)
+  users!: User[];
 }
 
 export default Application;

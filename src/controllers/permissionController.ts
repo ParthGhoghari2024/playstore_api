@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import { IPermissionReqBody } from "../types/permission";
+import { IAppIdVersionId, IPermissionReqBody } from "../types/permission";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
 import db from "../models";
 import Application from "../models/applicationModel";
 import Version from "../models/versionModel";
+import { Op } from "sequelize";
 const getAllPermissionController = async (
   req: Request,
   res: Response
@@ -161,8 +162,54 @@ const getApplicationPermissions = async (
               attributes: [],
             },
           ],
+          where: {
+            applicationId: appId,
+          },
         },
       ],
+    });
+
+    res.json({ success: 1, result: permisions });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+
+const getPermissionsTillVersion = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { appId, versionId }: IAppIdVersionId = req.body;
+    const permisions: Permission[] = await db.Permission.findAll({
+      raw: true,
+      attributes: [
+        "name",
+        "description",
+        [db.sequelize.col("version.id"), "versionId"],
+        [db.sequelize.col("version.application.id"), "appId"],
+      ],
+      include: [
+        {
+          model: db.Version,
+          attributes: [],
+          include: [
+            {
+              model: db.Application,
+              attributes: [],
+            },
+          ],
+          where: {
+            applicationId: appId,
+          },
+        },
+      ],
+      where: {
+        versionId: {
+          [Op.lte]: versionId,
+        },
+      },
     });
 
     res.json({ success: 1, result: permisions });
@@ -179,4 +226,5 @@ export {
   getPermissionByIdConroller,
   getPermissionsByVersion,
   getApplicationPermissions,
+  getPermissionsTillVersion,
 };

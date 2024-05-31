@@ -16,10 +16,12 @@ import {
 const router: Router = express.Router();
 
 router.route("/all").get(getAllVersionController);
-router.route("/").post(createVersionMiddleware, createVersionController);
-router.route("/:id").get(getVersionById);
-router.route("/edit").post(editVersionMiddleware, editVersionController);
-router.route("/delete").post(deleteVersionMiddleware, deleteVersionController);
+router
+  .route("/")
+  .post(createVersionMiddleware, createVersionController)
+  .put(editVersionMiddleware, editVersionController)
+  .delete(deleteVersionMiddleware, deleteVersionController);
 router.route("/app/:appId").get(getAppVersionsController);
+router.route("/:id").get(getVersionById);
 
 export default router;
