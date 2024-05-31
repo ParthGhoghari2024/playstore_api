@@ -4,6 +4,7 @@ import {
   deletePermissionController,
   editPermissionController,
   getAllPermissionController,
+  getApplicationPermissions,
   getPermissionByIdConroller,
   getPermissionsByVersion,
 } from "../controllers/permissionController";
@@ -21,7 +22,7 @@ router
   .route("/delete")
   .post(editPermissionMiddleware, deletePermissionController);
 router.route("/version/:versionId").get(getPermissionsByVersion);
-
+router.route("/application/:appId").get(getApplicationPermissions);
 router.route("/:id").get(getPermissionByIdConroller);
 
 export default router;

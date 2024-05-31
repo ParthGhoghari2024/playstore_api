@@ -1,5 +1,4 @@
-import { DataTypes, Optional } from "sequelize";
-import ApplicationModel from "./applicationModel";
+import { Optional } from "sequelize";
 import {
   AllowNull,
   AutoIncrement,

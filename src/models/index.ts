@@ -1,8 +1,4 @@
-import {
-  ModelType,
-  Sequelize,
-  type SequelizeOptions,
-} from "sequelize-typescript";
+import { ModelType, Sequelize } from "sequelize-typescript";
 
 import { development } from "../config/config";
 import models from "./models";

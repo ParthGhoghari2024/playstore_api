@@ -3,6 +3,8 @@ import { logger } from "../utils/pino";
 import { IPermissionReqBody } from "../types/permission";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
 import db from "../models";
+import Application from "../models/applicationModel";
+import Version from "../models/versionModel";
 const getAllPermissionController = async (
   req: Request,
   res: Response
@@ -134,6 +136,41 @@ const getPermissionsByVersion = async (
     res.json({ success: 0 });
   }
 };
+
+const getApplicationPermissions = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const appId: string = req.params.appId;
+    const permisions: Permission[] = await db.Permission.findAll({
+      raw: true,
+      attributes: [
+        "name",
+        "description",
+        [db.sequelize.col("version.id"), "versionId"],
+        [db.sequelize.col("version.application.id"), "appId"],
+      ],
+      include: [
+        {
+          model: db.Version,
+          attributes: [],
+          include: [
+            {
+              model: db.Application,
+              attributes: [],
+            },
+          ],
+        },
+      ],
+    });
+
+    res.json({ success: 1, result: permisions });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
 export {
   createPermissionController,
   getAllPermissionController,
@@ -141,4 +178,5 @@ export {
   deletePermissionController,
   getPermissionByIdConroller,
   getPermissionsByVersion,
+  getApplicationPermissions,
 };
