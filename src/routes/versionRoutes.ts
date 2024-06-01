@@ -1,10 +1,10 @@
 import express, { Router } from "express";
 import {
-  createVersionController,
-  deleteVersionController,
-  editVersionController,
-  getAllVersionController,
-  getAppVersionsController,
+  createVersion,
+  deleteVersion,
+  editVersion,
+  getAllVersion,
+  getAppVersions,
   getVersionById,
 } from "../controllers/versionController";
 import {
@@ -12,16 +12,15 @@ import {
   deleteVersionMiddleware,
   editVersionMiddleware,
 } from "../middlewares/versionMiddleware";
-
 const router: Router = express.Router();
 
-router.route("/all").get(getAllVersionController);
+router.route("/all").get(getAllVersion);
 router
   .route("/")
-  .post(createVersionMiddleware, createVersionController)
-  .put(editVersionMiddleware, editVersionController)
-  .delete(deleteVersionMiddleware, deleteVersionController);
-router.route("/app/:appId").get(getAppVersionsController);
+  .post(createVersionMiddleware, createVersion)
+  .put(editVersionMiddleware, editVersion)
+  .delete(deleteVersionMiddleware, deleteVersion);
+router.route("/app/:appId").get(getAppVersions);
 router.route("/:id").get(getVersionById);
 
 export default router;

@@ -6,10 +6,7 @@ import db from "../models";
 import Application from "../models/applicationModel";
 import Version from "../models/versionModel";
 import { Op } from "sequelize";
-const getAllPermissionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getAllPermission = async (req: Request, res: Response): Promise<void> => {
   try {
     const allPermissions: Permission[] = await db.Permission.findAll({
       attributes: ["name", "versionId", "description"],
@@ -22,12 +19,11 @@ const getAllPermissionController = async (
   }
 };
 
-const createPermissionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const createPermission = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, versionId, description }: IPermissionReqBody = req.body;
+    let { name, versionId, description }: IPermissionReqBody = req.body;
+    name = name.trim();
+    description = description.trim();
 
     const newPermission: IPermissionAttributes = {
       name: name,
@@ -44,18 +40,30 @@ const createPermissionController = async (
   }
 };
 
-const editPermissionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const editPermission = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id, name, versionId, description }: IPermissionReqBody = req.body;
+    let { id, name, versionId, description }: IPermissionReqBody = req.body;
+    name = name.trim();
+    description = description.trim();
 
-    const newPermission: IPermissionAttributes = {
-      name: name,
+    const findRes: Permission | null = await db.Permission.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No permission to edit" });
+      return;
+    }
+
+    const newPermission: Partial<IPermissionAttributes> = {
       versionId: versionId,
-      description: description,
     };
+
+    name && (newPermission.name = name);
+    description && (newPermission.description = description);
 
     await db.Permission.update(newPermission, {
       where: {
@@ -69,12 +77,21 @@ const editPermissionController = async (
     res.json({ success: 0 });
   }
 };
-const deletePermissionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const deletePermission = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.body.id;
+
+    const findRes: Permission | null = await db.Permission.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No permission to delete" });
+      return;
+    }
 
     await db.Permission.destroy({
       where: {
@@ -219,10 +236,10 @@ const getPermissionsTillVersion = async (
   }
 };
 export {
-  createPermissionController,
-  getAllPermissionController,
-  editPermissionController,
-  deletePermissionController,
+  createPermission,
+  getAllPermission,
+  editPermission,
+  deletePermission,
   getPermissionByIdConroller,
   getPermissionsByVersion,
   getApplicationPermissions,

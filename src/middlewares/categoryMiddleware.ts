@@ -3,7 +3,7 @@ import * as Joi from "joi";
 import { logger } from "../utils/pino";
 
 const createCategorySchema: Joi.ObjectSchema = Joi.object({
-  category: Joi.string().required().max(255),
+  category: Joi.string().trim().required().max(255),
 });
 
 const createCategoryMiddleware = async (
@@ -28,7 +28,7 @@ const createCategoryMiddleware = async (
 
 const editCategorySchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  category: Joi.string().required().max(255),
+  category: Joi.string().trim().optional().max(255),
 });
 
 const editCategoryMiddleware = async (

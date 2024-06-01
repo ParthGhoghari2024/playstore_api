@@ -1,9 +1,9 @@
 import express, { Router } from "express";
 import {
-  createPermissionController,
-  deletePermissionController,
-  editPermissionController,
-  getAllPermissionController,
+  createPermission,
+  deletePermission,
+  editPermission,
+  getAllPermission,
   getApplicationPermissions,
   getPermissionByIdConroller,
   getPermissionsByVersion,
@@ -17,12 +17,12 @@ import {
 
 const router: Router = express.Router();
 
-router.route("/all").get(getAllPermissionController);
+router.route("/all").get(getAllPermission);
 router
   .route("/")
-  .post(createPermissionMiddleware, createPermissionController)
-  .put(editPermissionMiddleware, editPermissionController)
-  .delete(deletePermissionMiddleware, deletePermissionController);
+  .post(createPermissionMiddleware, createPermission)
+  .put(editPermissionMiddleware, editPermission)
+  .delete(deletePermissionMiddleware, deletePermission);
 router.route("/version/:versionId").get(getPermissionsByVersion);
 router.route("/application/:appId").get(getApplicationPermissions);
 router.route("/version/till/").post(getPermissionsTillVersion);

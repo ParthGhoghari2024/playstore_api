@@ -34,6 +34,7 @@ import applicationRoute from "./routes/applicationRoutes";
 import versionRoute from "./routes/versionRoutes";
 import permissionRoute from "./routes/permissionRoutes";
 import installedAppsRoutes from "./routes/installedAppsRoutes";
+import developerRoute from "./routes/developerRoutes";
 import { ICorsOptions } from "./types/config";
 
 app.use("/user", userRoute);
@@ -43,6 +44,7 @@ app.use("/application", applicationRoute);
 app.use("/version", versionRoute);
 app.use("/permission", permissionRoute);
 app.use("/installedApps", installedAppsRoutes);
+app.use("/developer", developerRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello ts node");

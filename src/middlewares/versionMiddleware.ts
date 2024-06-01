@@ -4,8 +4,8 @@ import { logger } from "../utils/pino";
 
 const createVersionSchema: Joi.ObjectSchema = Joi.object({
   applicationId: Joi.number().required(),
-  version: Joi.string().required().max(255),
-  description: Joi.string().required(),
+  version: Joi.string().trim().required().max(255),
+  description: Joi.string().trim().required(),
 });
 
 const createVersionMiddleware = async (
@@ -33,8 +33,8 @@ const createVersionMiddleware = async (
 const editVersionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
   applicationId: Joi.number().required(),
-  version: Joi.string().required().max(255),
-  description: Joi.string().required(),
+  version: Joi.string().trim().optional().max(255),
+  description: Joi.string().trim().optional(),
 });
 
 const editVersionMiddleware = async (

@@ -7,11 +7,13 @@ import {
   CreatedAt,
   DataType,
   DeletedAt,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
+import User from "./userModel";
 interface IRoleAttributes {
   id?: number;
   role: string;
@@ -39,6 +41,9 @@ class Role extends Model<IRoleAttributes, IRoleCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
+
+  @HasMany(() => User)
+  users!: User[];
 }
 
 export default Role;

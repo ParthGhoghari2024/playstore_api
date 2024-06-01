@@ -10,7 +10,7 @@ export default {
             role: "user",
           },
           {
-            role: "admin",
+            role: "developer",
           },
         ],
         {}

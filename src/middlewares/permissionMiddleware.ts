@@ -4,9 +4,9 @@ import { logger } from "../utils/pino";
 import db from "../models";
 
 const createPermissionSchema: Joi.ObjectSchema = Joi.object({
-  name: Joi.string().required().max(255),
+  name: Joi.string().trim().required().max(255),
   versionId: Joi.number().required(),
-  description: Joi.string().required(),
+  description: Joi.string().trim().required(),
 });
 
 const createPermissionMiddleware = async (
@@ -31,9 +31,9 @@ const createPermissionMiddleware = async (
 
 const editPermissionSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  name: Joi.string().max(255).required(),
+  name: Joi.string().trim().max(255).optional(),
   versionId: Joi.number().required(),
-  description: Joi.string().required(),
+  description: Joi.string().trim().optional(),
 });
 
 const editPermissionMiddleware = async (

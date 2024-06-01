@@ -3,14 +3,8 @@ import { logger } from "../utils/pino";
 import Version, { IVersionAttributes } from "../models/versionModel";
 import { IVersionReqBody } from "../types/version";
 import db from "../models";
-import Application from "../models/applicationModel";
-import Category from "../models/categoryModel";
-import Genre from "../models/genreModel";
 
-const getAllVersionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getAllVersion = async (req: Request, res: Response): Promise<void> => {
   try {
     const allVersions: Version[] = await db.Version.findAll({
       attributes: ["applicationId", "version", "description"],
@@ -23,12 +17,11 @@ const getAllVersionController = async (
   }
 };
 
-const createVersionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const createVersion = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { applicationId, version, description }: IVersionReqBody = req.body;
+    let { applicationId, version, description }: IVersionReqBody = req.body;
+    version = version.trim();
+    description = description.trim();
 
     const newVersion: IVersionAttributes = {
       applicationId: applicationId,
@@ -44,19 +37,31 @@ const createVersionController = async (
   }
 };
 
-const editVersionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const editVersion = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id, applicationId, version, description }: IVersionReqBody =
-      req.body;
+    let { id, applicationId, version, description }: IVersionReqBody = req.body;
 
-    const newVersion: IVersionAttributes = {
+    version = version.trim();
+    description = description.trim();
+
+    const findRes: Version | null = await db.Version.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No version to edit" });
+      return;
+    }
+
+    const newVersion: Partial<IVersionAttributes> = {
       applicationId: applicationId,
-      version: version,
-      description: description,
     };
+
+    version && (newVersion.version = version);
+    description && (newVersion.description = description);
 
     await db.Version.update(newVersion, {
       where: {
@@ -89,13 +94,21 @@ const getVersionById = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const deleteVersionController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const deleteVersion = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.body.id;
 
+    const findRes: Version | null = await db.Version.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No version to delete" });
+      return;
+    }
     await db.Version.destroy({
       where: {
         id: id,
@@ -109,10 +122,7 @@ const deleteVersionController = async (
   }
 };
 
-const getAppVersionsController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getAppVersions = async (req: Request, res: Response): Promise<void> => {
   try {
     const appId: string = req.params.appId;
     const appVersions: Version[] = await db.Version.findAll({
@@ -154,10 +164,10 @@ const getAppVersionsController = async (
   }
 };
 export {
-  getAllVersionController,
-  createVersionController,
-  editVersionController,
+  getAllVersion,
+  createVersion,
+  editVersion,
   getVersionById,
-  deleteVersionController,
-  getAppVersionsController,
+  deleteVersion,
+  getAppVersions,
 };

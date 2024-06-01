@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import User, { IUserAttributes } from "../models/userModel";
 import db from "../models";
 import { logger } from "../utils/pino";
+import { INameEmail } from "../types/interface";
 
 interface IError extends Error {
   parent: {
@@ -11,10 +12,7 @@ interface IError extends Error {
   };
 }
 
-const getAllUserController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getAllUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const users: User[] = await db.User.findAll({
       attributes: ["id", "name", "email", "createdAt", "updatedAt"],
@@ -32,15 +30,15 @@ const getAllUserController = async (
   }
 };
 
-const createUserController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    let { name, email }: INameEmail = req.body;
+    name = name.trim();
+    email = email.trim();
     const roleId: number = 1;
     const newUser: IUserAttributes = {
-      name: req.body.name,
-      email: req.body.email,
+      name: name,
+      email: email,
       roleId: roleId,
     };
 
@@ -52,12 +50,21 @@ const createUserController = async (
   }
 };
 
-const deleteUserController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId: number = req.body.id;
+
+    const findRes: User | null = await db.User.findOne({
+      where: {
+        id: userId,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No user to delete" });
+      return;
+    }
     await db.User.destroy({
       where: {
         id: userId,
@@ -69,4 +76,4 @@ const deleteUserController = async (
     logger.error(error);
   }
 };
-export { getAllUserController, createUserController, deleteUserController };
+export { getAllUser, createUser, deleteUser };

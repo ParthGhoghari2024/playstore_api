@@ -2,6 +2,7 @@ import { Optional } from "sequelize";
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   BelongsToMany,
   Column,
   CreatedAt,
@@ -64,6 +65,9 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
 
   @BelongsToMany(() => Application, () => InstalledApp)
   applications!: Application[];
+
+  @BelongsTo(() => Role, "roleId")
+  role!: Role;
 }
 
 export default User;

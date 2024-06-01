@@ -5,12 +5,11 @@ import db from "../models";
 import Category, { ICategoryAttributes } from "../models/categoryModel";
 import { ICategory } from "../types/categoryANDGenre";
 
-const createCategoryController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const createCategory = async (req: Request, res: Response): Promise<void> => {
   try {
-    const category: string = req.body.category;
+    let category: string = req.body.category;
+    category = category.trim();
+
     const newCategory: ICategoryAttributes = {
       category,
     };
@@ -21,10 +20,7 @@ const createCategoryController = async (
     logger.error(error);
   }
 };
-const getAllCategoryController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getAllCategory = async (req: Request, res: Response): Promise<void> => {
   try {
     const allCategories: Category[] = await db.Category.findAll({
       attributes: ["category"],
@@ -37,10 +33,7 @@ const getAllCategoryController = async (
   }
 };
 
-const getCategoryByIdController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const getCategoryById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id: string = req.params.id;
 
@@ -58,14 +51,27 @@ const getCategoryByIdController = async (
   }
 };
 
-const editCategoryByIdController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const editCategoryById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id, category }: ICategory = req.body;
+    let { id, category }: ICategory = req.body;
 
-    await db.Category.update(
+    category = category.trim();
+    const findRes: Category | null = await db.Category.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No category to edit" });
+      return;
+    }
+
+    if (!category) {
+      category = findRes.category;
+    }
+    const editResult: number[] = await db.Category.update(
       {
         category: category,
       },
@@ -83,12 +89,24 @@ const editCategoryByIdController = async (
   }
 };
 
-const deleteCategoryByIdController = async (
+const deleteCategoryById = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const id: string = req.body.id;
+
+    const findRes: Category | null = await db.Category.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+
+    if (!findRes) {
+      res.json({ success: 0, error: "No category to delete" });
+      return;
+    }
     await db.Category.destroy({
       where: {
         id: id,
@@ -102,9 +120,9 @@ const deleteCategoryByIdController = async (
   }
 };
 export {
-  createCategoryController,
-  getAllCategoryController,
-  getCategoryByIdController,
-  deleteCategoryByIdController,
-  editCategoryByIdController,
+  createCategory,
+  getAllCategory,
+  getCategoryById,
+  deleteCategoryById,
+  editCategoryById,
 };

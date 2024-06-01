@@ -3,7 +3,8 @@ import * as Joi from "joi";
 import { logger } from "../utils/pino";
 
 const createGenreSchema: Joi.ObjectSchema = Joi.object({
-  genre: Joi.string().required().max(255),
+  genre: Joi.string().trim().required().max(255),
+  category: Joi.string().trim().required().max(255),
 });
 
 const createGenreMiddleware = async (
@@ -30,8 +31,8 @@ const createGenreMiddleware = async (
 
 const editGenreSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  genre: Joi.string().required().max(255),
-  category: Joi.string().required().max(255),
+  genre: Joi.string().trim().required().max(255),
+  category: Joi.string().trim().required().max(255),
 });
 
 const editGenreMiddleware = async (

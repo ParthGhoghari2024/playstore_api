@@ -32,6 +32,7 @@ const insertInstalledApp = async (
 const getInstalledApps = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = 1;
+
     const installedApps: InstalledApp[] = await db.InstalledApp.findAll({
       raw: true,
       attributes: [
@@ -96,11 +97,14 @@ const getInstalledAppByCategory = async (
   res: Response
 ): Promise<void> => {
   try {
-    const category: string = req.params.category;
+    let category: string = req.params.category;
+    category = category.trim();
+
     const userId: number = 1; //TODO:
     const categoryId: number | null = await getCategoryIdByName(category);
     if (!categoryId) {
       res.json({ sucess: 0, error: "No category found" });
+      return;
     }
     const installedApps: InstalledApp[] = await db.InstalledApp.findAll({
       raw: true,
@@ -145,7 +149,8 @@ const getInstalledAppByGenre = async (
   res: Response
 ): Promise<void> => {
   try {
-    const genre: string = req.params.genre;
+    let genre: string = req.params.genre;
+    genre = genre.trim();
     const userId: number = 1; //TODO:
 
     const genreId: number | null = await getGenreIdByName(genre);

@@ -22,11 +22,11 @@ import Version from "./versionModel";
 import InstalledApp from "./installedAppModel";
 export interface IApplicationAttributes {
   id?: number;
-  name: string;
-  developerId: number;
-  description: string;
-  categoryId: number;
-  genreId: number;
+  name?: string;
+  developerId?: number;
+  description?: string;
+  categoryId?: number;
+  genreId?: number;
 }
 
 export interface IApplicationCreationAttributes

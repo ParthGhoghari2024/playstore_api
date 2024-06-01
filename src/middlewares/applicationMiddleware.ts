@@ -3,10 +3,10 @@ import * as Joi from "joi";
 import { logger } from "../utils/pino";
 
 const createApplicationSchema: Joi.ObjectSchema = Joi.object({
-  name: Joi.string().required(),
-  description: Joi.string().required(),
-  category: Joi.string().required().max(255),
-  genre: Joi.string().required().max(255),
+  name: Joi.string().trim().required(),
+  description: Joi.string().trim().required(),
+  category: Joi.string().trim().required().max(255),
+  genre: Joi.string().trim().required().max(255),
 });
 
 const createApplicationMiddleware = async (
@@ -31,10 +31,10 @@ const createApplicationMiddleware = async (
 
 const editApplicationSchema: Joi.ObjectSchema = Joi.object({
   id: Joi.number().required(),
-  name: Joi.string().required().max(255),
-  description: Joi.string().required(),
-  category: Joi.string().required().max(255),
-  genre: Joi.string().required().max(255),
+  name: Joi.string().trim().optional().max(255),
+  description: Joi.string().trim().optional(),
+  category: Joi.string().trim().optional().max(255),
+  genre: Joi.string().trim().optional().max(255),
 });
 
 const editApplicationMiddleware = async (

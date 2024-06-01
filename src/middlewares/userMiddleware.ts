@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import * as Joi from "joi";
 import { logger } from "../utils/pino";
 const userSignupSchema: Joi.ObjectSchema = Joi.object({
-  name: Joi.string().required().max(255),
-  email: Joi.string().email().required().max(255),
+  name: Joi.string().trim().required().max(255),
+  email: Joi.string().trim().email().required().max(255),
 });
 
 const createUserMiddleware = async (

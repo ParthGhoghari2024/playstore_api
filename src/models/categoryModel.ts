@@ -12,7 +12,7 @@ import {
   Unique,
   UpdatedAt,
 } from "sequelize-typescript";
-import { DataTypes, Optional } from "sequelize";
+import { Optional } from "sequelize";
 import Application from "./applicationModel";
 import Genre from "./genreModel";
 
