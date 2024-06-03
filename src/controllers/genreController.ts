@@ -7,7 +7,18 @@ import Genre, { IGenreAttributes } from "../models/genreModel";
 import Category from "../models/categoryModel";
 import Application from "../models/applicationModel";
 import { getGenreIdByName } from "../helper/genreHelper";
-const createGenre = async (req: Request, res: Response): Promise<void> => {
+import {
+  deleteGenre,
+  findGenreById,
+  getAllGenre,
+  getGenreByCategory,
+  insertGenre,
+  updateGenre,
+} from "../services/genreService";
+const createGenreController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let genre: string = req.body.genre;
     let category: string = req.body.category;
@@ -25,51 +36,47 @@ const createGenre = async (req: Request, res: Response): Promise<void> => {
       genre: genre,
       categoryId: categoryId!,
     };
-    await db.Genre.create(newGenre);
-    res.json({ success: 1 });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const getAllGenre = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const allGenres: Genre[] = await db.Genre.findAll({
-      raw: true,
-      attributes: [
-        "genre",
-        [db.sequelize.col("category.category"), "category"],
-      ],
-      include: [
-        {
-          model: db.Category,
-          attributes: [],
-        },
-      ],
-    });
-
-    res.json({ success: 1, result: allGenres });
+    const insertResult = await insertGenre(newGenre);
+    if (insertResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const editGenreById = async (req: Request, res: Response): Promise<void> => {
+const getAllGenreController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const allGenres: Genre[] | undefined = await getAllGenre();
+
+    if (allGenres) res.json({ success: 1, result: allGenres });
+    else res.json({ success: 0 });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+
+const editGenreByIdController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let genre: string = req.body.genre;
     let category: string = req.body.category;
-    const id: string = req.body.id;
+    const id: number = Number(req.body.id);
 
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No id found" });
+      return;
+    }
     genre = genre.trim();
     category = category.trim();
 
-    const findRes: Genre | null = await db.Genre.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Genre | null = await findGenreById(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No genre to edit" });
@@ -88,47 +95,43 @@ const editGenreById = async (req: Request, res: Response): Promise<void> => {
       categoryId: categoryId!.id!,
     };
 
-    await db.Genre.update(newGenre, {
-      where: {
-        id: id,
-      },
-    });
+    const updateResult = await updateGenre(newGenre, id);
 
-    res.json({ success: 1 });
+    if (updateResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const deleteGenereById = async (req: Request, res: Response): Promise<void> => {
+const deleteGenereByIdController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const id: string = req.body.id;
-    const findRes: Genre | null = await db.Genre.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const id: number = Number(req.body.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No id found" });
+      return;
+    }
+    const findRes: Genre | null = await findGenreById(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No genre to delete" });
       return;
     }
-    await db.Genre.destroy({
-      where: {
-        id: id,
-      },
-    });
+    const deleteResult = await deleteGenre(id);
 
-    res.json({ success: 1 });
+    if (deleteResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getGenresByCategory = async (
+const getGenresByCategoryController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -142,14 +145,10 @@ const getGenresByCategory = async (
       return;
     }
 
-    const genres: Genre[] = await db.Genre.findAll({
-      attributes: ["genre"],
-      where: {
-        categoryId: categoryId,
-      },
-    });
+    const genres: Genre[] | undefined = await getGenreByCategory(categoryId);
 
-    res.json({ success: 1, result: genres });
+    if (genres) res.json({ success: 1, result: genres });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
@@ -157,9 +156,9 @@ const getGenresByCategory = async (
 };
 
 export {
-  createGenre,
-  getAllGenre,
-  editGenreById,
-  deleteGenereById,
-  getGenresByCategory,
+  createGenreController,
+  getAllGenreController,
+  editGenreByIdController,
+  deleteGenereByIdController,
+  getGenresByCategoryController,
 };

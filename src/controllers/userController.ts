@@ -5,6 +5,12 @@ import User, { IUserAttributes } from "../models/userModel";
 import db from "../models";
 import { logger } from "../utils/pino";
 import { INameEmail } from "../types/interface";
+import {
+  deleteUser,
+  getAllUser,
+  getUserIdIfExists,
+  insertUser,
+} from "../services/userService";
 
 interface IError extends Error {
   parent: {
@@ -12,14 +18,15 @@ interface IError extends Error {
   };
 }
 
-const getAllUser = async (req: Request, res: Response): Promise<void> => {
+const getAllUserController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const users: User[] = await db.User.findAll({
-      attributes: ["id", "name", "email", "createdAt", "updatedAt"],
-      raw: true,
-    });
+    const users: User[] | undefined = await getAllUser();
 
-    res.json({ success: 1, result: users });
+    if (users) res.json({ success: 1, result: users });
+    else res.json({ success: 0 });
   } catch (error: unknown) {
     if (error instanceof Error) {
       const IErrorInstance = error as IError;
@@ -30,50 +37,52 @@ const getAllUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const createUser = async (req: Request, res: Response): Promise<void> => {
+const createUserController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { name, email }: INameEmail = req.body;
     name = name.trim();
     email = email.trim();
-    const roleId: number = 1;
+    const roleId: number = 1; //TODO:
     const newUser: IUserAttributes = {
       name: name,
       email: email,
       roleId: roleId,
     };
 
-    await db.User.create(newUser);
+    const insertResult: User | undefined = await insertUser(newUser);
 
-    res.json({ success: 1 });
+    if (insertResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
   }
 };
 
-const deleteUser = async (req: Request, res: Response): Promise<void> => {
+const deleteUserController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const userId: number = req.body.id;
-
-    const findRes: User | null = await db.User.findOne({
-      where: {
-        id: userId,
-      },
-      attributes: ["id"],
-    });
+    const userId: number = Number(req.body.id);
+    if (!userId || isNaN(userId)) {
+      res.json({ success: 0, error: "Invalid user id" });
+      return;
+    }
+    const findRes: User | null = await getUserIdIfExists(userId);
 
     if (!findRes) {
       res.json({ success: 0, error: "No user to delete" });
       return;
     }
-    await db.User.destroy({
-      where: {
-        id: userId,
-      },
-    });
+    const deleteResult = await deleteUser(userId);
 
-    res.json({ success: 1 });
+    if (deleteResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
   }
 };
-export { getAllUser, createUser, deleteUser };
+export { getAllUserController, createUserController, deleteUserController };

@@ -1,10 +1,10 @@
 import express, { Router } from "express";
 import {
-  createGenre,
-  deleteGenereById,
-  editGenreById,
-  getAllGenre,
-  getGenresByCategory,
+  createGenreController,
+  deleteGenereByIdController,
+  editGenreByIdController,
+  getAllGenreController,
+  getGenresByCategoryController,
 } from "../controllers/genreController";
 import {
   createGenreMiddleware,
@@ -16,11 +16,11 @@ const router: Router = express.Router();
 
 router
   .route("/")
-  .post(createGenreMiddleware, createGenre)
-  .put(editGenreMiddleware, editGenreById)
-  .delete(deleteGenreMiddleware, deleteGenereById);
+  .post(createGenreMiddleware, createGenreController)
+  .put(editGenreMiddleware, editGenreByIdController)
+  .delete(deleteGenreMiddleware, deleteGenereByIdController);
 
-router.route("/category/:category").get(getGenresByCategory);
-router.route("/all").get(getAllGenre);
+router.route("/category/:category").get(getGenresByCategoryController);
+router.route("/all").get(getAllGenreController);
 
 export default router;

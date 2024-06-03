@@ -3,21 +3,34 @@ import { logger } from "../utils/pino";
 import Version, { IVersionAttributes } from "../models/versionModel";
 import { IVersionReqBody } from "../types/version";
 import db from "../models";
+import {
+  deleteVersion,
+  getAllVersions,
+  getAppVersions,
+  getVersionById,
+  getVersionIdIfExists,
+  insertVersion,
+  updateVersion,
+} from "../services/versionService";
 
-const getAllVersion = async (req: Request, res: Response): Promise<void> => {
+const getAllVersionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const allVersions: Version[] = await db.Version.findAll({
-      attributes: ["applicationId", "version", "description"],
-    });
-
-    res.json({ success: 1, result: allVersions });
+    const allVersions: Version[] | undefined = await getAllVersions();
+    if (allVersions) res.json({ success: 1, result: allVersions });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const createVersion = async (req: Request, res: Response): Promise<void> => {
+const createVersionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { applicationId, version, description }: IVersionReqBody = req.body;
     version = version.trim();
@@ -28,28 +41,26 @@ const createVersion = async (req: Request, res: Response): Promise<void> => {
       version: version,
       description: description,
     };
-    await db.Version.create(newVersion);
+    const insertResult = await insertVersion(newVersion);
 
-    res.json({ success: 1 });
+    if (insertResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const editVersion = async (req: Request, res: Response): Promise<void> => {
+const editVersionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { id, applicationId, version, description }: IVersionReqBody = req.body;
-
     version = version.trim();
     description = description.trim();
 
-    const findRes: Version | null = await db.Version.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Version | null = await getVersionIdIfExists(id!);
 
     if (!findRes) {
       res.json({ success: 0, error: "No version to edit" });
@@ -63,111 +74,86 @@ const editVersion = async (req: Request, res: Response): Promise<void> => {
     version && (newVersion.version = version);
     description && (newVersion.description = description);
 
-    await db.Version.update(newVersion, {
-      where: {
-        id: id,
-      },
-    });
+    const updateResult = await updateVersion(newVersion, id!);
 
-    res.json({ success: 1 });
+    if (updateResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getVersionById = async (req: Request, res: Response): Promise<void> => {
+const getVersionByIdController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const id: string = req.params.id;
+    const id: number = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "Invalid id" });
+      return;
+    }
+    const versionRes: Version | null = await getVersionById(id);
 
-    const versionRes: Version | null = await db.Version.findOne({
-      attributes: ["applicationId", "version", "description"],
-      where: {
-        id: id,
-      },
-    });
-
-    res.json({ success: 1, result: versionRes });
+    if (versionRes) res.json({ success: 1, result: versionRes });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const deleteVersion = async (req: Request, res: Response): Promise<void> => {
+const deleteVersionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const id: string = req.body.id;
-
-    const findRes: Version | null = await db.Version.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const id: number = Number(req.body.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "Invalid id" });
+      return;
+    }
+    const findRes: Version | null = await getVersionIdIfExists(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No version to delete" });
       return;
     }
-    await db.Version.destroy({
-      where: {
-        id: id,
-      },
-    });
+    const deleteResult = await deleteVersion(id);
 
-    res.json({ success: 1 });
+    if (deleteResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getAppVersions = async (req: Request, res: Response): Promise<void> => {
+const getAppVersionsController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const appId: string = req.params.appId;
-    const appVersions: Version[] = await db.Version.findAll({
-      attributes: [
-        "version",
-        "description",
-        [db.sequelize.col("application.name"), "appName"],
-        [db.sequelize.col("application.description"), "appDescription"],
-        [db.sequelize.col("application.category.category"), "category"],
-        [db.sequelize.col("application.genre.genre"), "genre"],
-      ],
-      where: {
-        applicationId: appId,
-      },
-      include: [
-        {
-          model: db.Application,
-          foreignKey: "applicationId",
-          attributes: [],
-          include: [
-            {
-              model: db.Category,
-              attributes: [],
-            },
-            {
-              model: db.Genre,
-              attributes: [],
-            },
-          ],
-        },
-      ],
-      raw: true,
-    });
+    const appId: number = Number(req.params.appId);
+    if (!appId || isNaN(appId)) {
+      res.json({ success: 0, error: "Invalid id" });
+      return;
+    }
+    const appVersions: Version[] | undefined = await getAppVersions(appId);
 
-    res.json({ success: 1, result: appVersions });
+    if (appVersions) res.json({ success: 1, result: appVersions });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 export {
-  getAllVersion,
-  createVersion,
-  editVersion,
-  getVersionById,
-  deleteVersion,
-  getAppVersions,
+  getAllVersionController,
+  createVersionController,
+  editVersionController,
+  getVersionByIdController,
+  deleteVersionController,
+  getAppVersionsController,
 };

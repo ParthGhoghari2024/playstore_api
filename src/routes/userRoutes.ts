@@ -1,8 +1,8 @@
 import express, { Router } from "express";
 import {
-  createUser,
-  deleteUser,
-  getAllUser,
+  createUserController,
+  deleteUserController,
+  getAllUserController,
 } from "../controllers/userController";
 import {
   createUserMiddleware,
@@ -13,9 +13,9 @@ const router: Router = express.Router();
 
 router
   .route("/")
-  .post(createUserMiddleware, createUser)
-  .delete(deleteUserMiddleware, deleteUser);
+  .post(createUserMiddleware, createUserController)
+  .delete(deleteUserMiddleware, deleteUserController);
 
-router.route("/all").get(getAllUser);
+router.route("/all").get(getAllUserController);
 
 export default router;

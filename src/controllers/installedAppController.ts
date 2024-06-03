@@ -6,7 +6,14 @@ import InstalledApp, {
 } from "../models/installedAppModel";
 import { getCategoryIdByName } from "../helper/categoryHelper";
 import { getGenreIdByName } from "../helper/genreHelper";
-const insertInstalledApp = async (
+import {
+  getInstalledAppByAppIdUserId,
+  getInstalledAppByCategoryId,
+  getInstalledAppByGenreId,
+  getInstalledApps,
+  insertInstalledApp,
+} from "../services/installedAppService";
+const insertInstalledAppController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -18,81 +25,66 @@ const insertInstalledApp = async (
       userId,
       applicationId,
     };
-    const insertResult: InstalledApp = await db.InstalledApp.create(
+    const insertResult: InstalledApp | undefined = await insertInstalledApp(
       createInstalledApp
     );
 
-    res.json({ success: 1 });
+    if (insertResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getInstalledApps = async (req: Request, res: Response): Promise<void> => {
+const getInstalledAppsController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const userId = 1;
+    const userId = 1; //TODO:
 
-    const installedApps: InstalledApp[] = await db.InstalledApp.findAll({
-      raw: true,
-      attributes: [
-        [db.sequelize.col("application.name"), "name"],
-        [db.sequelize.col("application.description"), "description"],
-        [db.sequelize.col("application.category.category"), "category"],
-        [db.sequelize.col("application.genre.genre"), "genre"],
-      ],
-      where: {
-        userId: userId,
-      },
-      include: [
-        {
-          model: db.Application,
-          attributes: [],
-          include: [
-            {
-              model: db.Category,
-              attributes: [],
-            },
-            {
-              model: db.Genre,
-              attributes: [],
-            },
-          ],
-        },
-      ],
-    });
+    const installedApps: InstalledApp[] | undefined = await getInstalledApps(
+      userId
+    );
 
-    res.json({ success: 1, result: installedApps });
+    if (installedApps) res.json({ success: 1, result: installedApps });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.jsonp({ success: 0 });
   }
 };
 
-const isAppInstalled = async (req: Request, res: Response): Promise<void> => {
+const isAppInstalledController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const appId: string = req.params.appId;
+    const appId: number = Number(req.params.appId);
 
-    const userId: number = 1; //TODO:
-    const result: InstalledApp | null = await db.InstalledApp.findOne({
-      where: {
-        applicationId: appId,
-        userId: userId,
-      },
-    });
-
-    if (!result) {
-      res.json({ success: 1, result: { isAppInstalled: false } });
+    if (!appId || isNaN(appId)) {
+      res.json({ success: 0, error: "No App id found" });
       return;
     }
-    res.json({ success: 1, result: { isAppInstalled: true } });
+    const userId: number = 1; //TODO:
+    const result: InstalledApp | null = await getInstalledAppByAppIdUserId(
+      appId,
+      userId
+    );
+
+    if (!result) {
+      res.json({ success: 1, result: { isAppInstalledController: false } });
+      return;
+    }
+    res.json({ success: 1, result: { isAppInstalledController: true } });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getInstalledAppByCategory = async (
+const getInstalledAppByCategoryController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -106,45 +98,18 @@ const getInstalledAppByCategory = async (
       res.json({ sucess: 0, error: "No category found" });
       return;
     }
-    const installedApps: InstalledApp[] = await db.InstalledApp.findAll({
-      raw: true,
-      where: {
-        userId: userId,
-      },
-      attributes: [
-        [db.sequelize.col("application.name"), "name"],
-        [db.sequelize.col("application.category.category"), "category"],
-        [db.sequelize.col("application.genre.genre"), "genre"],
-      ],
-      include: [
-        {
-          model: db.Application,
-          attributes: [],
-          include: [
-            {
-              model: db.Category,
-              attributes: [],
-            },
-            {
-              model: db.Genre,
-              attributes: [],
-            },
-          ],
-          where: {
-            categoryId: categoryId,
-          },
-        },
-      ],
-    });
+    const installedApps: InstalledApp[] | undefined =
+      await getInstalledAppByCategoryId(userId, categoryId);
 
-    res.json({ success: 1, result: installedApps });
+    if (installedApps) res.json({ success: 1, result: installedApps });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getInstalledAppByGenre = async (
+const getInstalledAppByGenreController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -160,42 +125,20 @@ const getInstalledAppByGenre = async (
       return;
     }
 
-    const installedApps: InstalledApp[] = await db.InstalledApp.findAll({
-      raw: true,
-      where: {
-        userId: userId,
-      },
-      attributes: [
-        [db.sequelize.col("application.name"), "name"],
-        [db.sequelize.col("application.genre.genre"), "genre"],
-      ],
-      include: [
-        {
-          model: db.Application,
-          attributes: [],
-          include: [
-            {
-              model: db.Genre,
-              attributes: [],
-            },
-          ],
-          where: {
-            genreId: genreId,
-          },
-        },
-      ],
-    });
+    const installedApps: InstalledApp[] | undefined =
+      await getInstalledAppByGenreId(userId, genreId);
 
-    res.json({ success: 1, result: installedApps });
+    if (installedApps) res.json({ success: 1, result: installedApps });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 export {
-  insertInstalledApp,
-  getInstalledApps,
-  isAppInstalled,
-  getInstalledAppByCategory,
-  getInstalledAppByGenre,
+  insertInstalledAppController,
+  getInstalledAppsController,
+  isAppInstalledController,
+  getInstalledAppByCategoryController,
+  getInstalledAppByGenreController,
 };

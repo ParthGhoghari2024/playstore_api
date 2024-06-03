@@ -4,8 +4,18 @@ import { logger } from "../utils/pino";
 import db from "../models";
 import Category, { ICategoryAttributes } from "../models/categoryModel";
 import { ICategory } from "../types/categoryANDGenre";
+import {
+  deleteCategory,
+  getAllCategory,
+  getCategoryById,
+  insertCategory,
+  updateCategory,
+} from "../services/categoryService";
 
-const createCategory = async (req: Request, res: Response): Promise<void> => {
+const createCategoryController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let category: string = req.body.category;
     category = category.trim();
@@ -13,45 +23,55 @@ const createCategory = async (req: Request, res: Response): Promise<void> => {
     const newCategory: ICategoryAttributes = {
       category,
     };
-    await db.Category.create(newCategory);
-
-    res.json({ success: 1 });
+    const insertResult: Category | undefined = await insertCategory(
+      newCategory
+    );
+    if (insertResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
+    res.json({ success: 0 });
   }
 };
-const getAllCategory = async (req: Request, res: Response): Promise<void> => {
+const getAllCategoryController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const allCategories: Category[] = await db.Category.findAll({
-      attributes: ["category"],
-    });
+    const allCategories: Category[] | undefined = await getAllCategory();
 
-    res.json({ success: 1, result: allCategories });
+    if (allCategories) res.json({ success: 1, result: allCategories });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getCategoryById = async (req: Request, res: Response): Promise<void> => {
+const getCategoryByIdController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const id: string = req.params.id;
+    const id: number = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No id found" });
+      return;
+    }
+    const category: Category | null = await getCategoryById(id);
 
-    const category: Category | null = await db.Category.findOne({
-      attributes: ["category"],
-      where: {
-        id: id,
-      },
-    });
-
-    res.json({ success: 1, result: category });
+    if (category) res.json({ success: 1, result: category });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const editCategoryById = async (req: Request, res: Response): Promise<void> => {
+const editCategoryByIdController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { id, category }: ICategory = req.body;
 
@@ -71,30 +91,31 @@ const editCategoryById = async (req: Request, res: Response): Promise<void> => {
     if (!category) {
       category = findRes.category;
     }
-    const editResult: number[] = await db.Category.update(
-      {
-        category: category,
-      },
-      {
-        where: {
-          id: id,
-        },
-      }
+    const editResult: number[] | undefined = await updateCategory(
+      category,
+      id!
     );
+    console.log(editResult);
 
-    res.json({ sucess: 1 });
+    if (editResult) res.json({ sucess: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ sucess: 0 });
   }
 };
 
-const deleteCategoryById = async (
+const deleteCategoryByIdController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const id: string = req.body.id;
+    const id: number = Number(req.body.id);
+
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No id found" });
+      return;
+    }
 
     const findRes: Category | null = await db.Category.findOne({
       where: {
@@ -107,22 +128,19 @@ const deleteCategoryById = async (
       res.json({ success: 0, error: "No category to delete" });
       return;
     }
-    await db.Category.destroy({
-      where: {
-        id: id,
-      },
-    });
+    const deleteResult: number | null = await deleteCategory(id);
 
-    res.json({ success: 1 });
+    if (deleteResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 export {
-  createCategory,
-  getAllCategory,
-  getCategoryById,
-  deleteCategoryById,
-  editCategoryById,
+  createCategoryController,
+  getAllCategoryController,
+  getCategoryByIdController,
+  deleteCategoryByIdController,
+  editCategoryByIdController,
 };

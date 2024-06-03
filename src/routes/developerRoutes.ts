@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { getApplicationsByDeveloper } from "../controllers/applicationController";
+import { getApplicationsByDeveloperController } from "../controllers/applicationController";
 const router: Router = express.Router();
 
-router.route("/apps").post(getApplicationsByDeveloper);
+router.route("/apps").post(getApplicationsByDeveloperController);
 
 export default router;

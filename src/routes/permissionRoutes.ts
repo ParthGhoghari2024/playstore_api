@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import {
-  createPermission,
-  deletePermission,
-  editPermission,
-  getAllPermission,
-  getApplicationPermissions,
+  createPermissionController,
+  deletePermissionController,
+  editPermissionController,
+  getAllPermissionController,
+  getApplicationPermissionsController,
   getPermissionByIdConroller,
-  getPermissionsByVersion,
-  getPermissionsTillVersion,
+  getPermissionsByVersionController,
+  getPermissionsTillVersionController,
 } from "../controllers/permissionController";
 import {
   createPermissionMiddleware,
@@ -17,15 +17,15 @@ import {
 
 const router: Router = express.Router();
 
-router.route("/all").get(getAllPermission);
+router.route("/all").get(getAllPermissionController);
 router
   .route("/")
-  .post(createPermissionMiddleware, createPermission)
-  .put(editPermissionMiddleware, editPermission)
-  .delete(deletePermissionMiddleware, deletePermission);
-router.route("/version/:versionId").get(getPermissionsByVersion);
-router.route("/application/:appId").get(getApplicationPermissions);
-router.route("/version/till/").post(getPermissionsTillVersion);
+  .post(createPermissionMiddleware, createPermissionController)
+  .put(editPermissionMiddleware, editPermissionController)
+  .delete(deletePermissionMiddleware, deletePermissionController);
+router.route("/version/:versionId").get(getPermissionsByVersionController);
+router.route("/application/:appId").get(getApplicationPermissionsController);
+router.route("/version/till/").post(getPermissionsTillVersionController);
 
 router.route("/:id").get(getPermissionByIdConroller);
 

@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import {
-  createApplication,
-  deleteApplication,
-  editApplication,
-  getAllApplication,
-  getApplicationByGenre,
-  getApplicationById,
-  getCountOfApplicationByCategory,
-  searchApplication,
+  createApplicationController,
+  deleteApplicationController,
+  editApplicationController,
+  getAllApplicationController,
+  getApplicationByGenreController,
+  getApplicationByIdController,
+  getCountOfApplicationByCategoryController,
+  searchApplicationController,
 } from "../controllers/applicationController";
 import {
   createApplicationMiddleware,
@@ -19,14 +19,16 @@ const router: Router = express.Router();
 
 router
   .route("/")
-  .post(createApplicationMiddleware, createApplication)
-  .put(editApplicationMiddleware, editApplication)
-  .delete(deleteApplicationMiddleware, deleteApplication);
-router.route("/all").get(getAllApplication);
+  .post(createApplicationMiddleware, createApplicationController)
+  .put(editApplicationMiddleware, editApplicationController)
+  .delete(deleteApplicationMiddleware, deleteApplicationController);
+router.route("/all").get(getAllApplicationController);
 
-router.route("/byGenre").post(getApplicationByGenre);
-router.route("/search").get(searchApplication);
-router.route("/count/category/:category").get(getCountOfApplicationByCategory);
+router.route("/byGenre").post(getApplicationByGenreController);
+router.route("/search").get(searchApplicationController);
+router
+  .route("/count/category/:category")
+  .get(getCountOfApplicationByCategoryController);
 
-router.route("/:id").get(getApplicationById);
+router.route("/:id").get(getApplicationByIdController);
 export default router;

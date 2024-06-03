@@ -9,23 +9,34 @@ import { IApplicationReqBody } from "../types/application";
 
 import db from "../models";
 import { getRoleByUserId } from "../helper/userHelper";
-import { getApplications } from "../helper/applicationHelper";
 import { Op, WhereOptions } from "sequelize";
-import { getCategoryById } from "./categoryController";
-const getAllApplication = async (
+import {
+  deleteApplication,
+  getApplicationById,
+  getApplicationsByDeveloperId,
+  getApplicationsByGenreId,
+  getApplicationsByWhere,
+  getCountOfApplicationByCategoryId,
+  insertApplication,
+  updateApplicationById,
+} from "../services/applicationService";
+const getAllApplicationController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allApplications: Application[] | null = await getApplications({});
-    res.json({ success: 1, result: allApplications });
+    const allApplications: Application[] | null = await getApplicationsByWhere(
+      {}
+    );
+    if (allApplications) res.json({ success: 1, result: allApplications });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const createApplication = async (
+const createApplicationController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -59,18 +70,22 @@ const createApplication = async (
       genreId: genreId,
     };
 
-    const createResult: Application = await db.Application.create(
+    const createResult: Application | undefined = await insertApplication(
       newApplication
     );
 
-    res.json({ success: 1 });
+    if (createResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const editApplication = async (req: Request, res: Response): Promise<void> => {
+const editApplicationController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { id, name, description, category, genre }: IApplicationReqBody =
       req.body;
@@ -111,67 +126,53 @@ const editApplication = async (req: Request, res: Response): Promise<void> => {
     category && (newApplication.categoryId = categoryId!);
     genre && (newApplication.genreId = genreId!);
 
-    const updateResult: number[] = await db.Application.update(newApplication, {
-      where: {
-        id: id,
-      },
-    });
+    const updateResult: number[] | undefined = await updateApplicationById(
+      newApplication,
+      id!
+    );
 
-    res.json({ success: 1 });
+    if (updateResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getApplicationById = async (
+const getApplicationByIdController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const id: string = req.params.id;
-    const applicationDetail: Application | null = await db.Application.findOne({
-      attributes: [
-        "id",
-        "name",
-        "description",
-        [db.sequelize.col("genre"), "genre"],
-        [db.sequelize.col("category"), "category"],
-      ],
-      where: {
-        id: id,
-      },
-      include: [
-        {
-          model: db.User,
-          as: "developer",
-          attributes: ["name", "email"],
-        },
-        {
-          model: db.Genre,
-          attributes: [],
-        },
-        {
-          model: db.Category,
-          attributes: [],
-        },
-      ],
-      raw: true,
-      nest: true,
-    });
-    res.json({ success: 1, result: applicationDetail });
+    const id: number = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No id found" });
+      return;
+    }
+    const applicationDetail: Application | null = await getApplicationById(id);
+
+    if (applicationDetail)
+      res.json({
+        success: 1,
+        result: applicationDetail,
+      });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const deleteApplication = async (
+const deleteApplicationController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const id: string = req.body.id;
+    const id: number = Number(req.body.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No id found" });
+      return;
+    }
     const findRes: Application | null = await db.Application.findOne({
       where: {
         id: id,
@@ -183,19 +184,16 @@ const deleteApplication = async (
       res.json({ success: 0, error: "No application to delete" });
       return;
     }
-    await db.Application.destroy({
-      where: {
-        id: id,
-      },
-    });
-    res.json({ success: 1 });
+    const deleteResult: number | undefined = await deleteApplication(id);
+    if (deleteResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getApplicationByGenre = async (
+const getApplicationByGenreController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -207,21 +205,18 @@ const getApplicationByGenre = async (
       res.json({ success: 0, error: "Wrong Genre" });
       return;
     }
-    const applications: Application[] = await db.Application.findAll({
-      attributes: ["name", "description"],
-      where: {
-        genreId: genreId,
-      },
-    });
+    const applications: Application[] | undefined =
+      await getApplicationsByGenreId(genreId);
 
-    res.json({ success: 1, result: applications });
+    if (applications) res.json({ success: 1, result: applications });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getApplicationsByDeveloper = async (
+const getApplicationsByDeveloperController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -239,38 +234,17 @@ const getApplicationsByDeveloper = async (
       return;
     }
 
-    const applications: Application[] | null = await db.Application.findAll({
-      attributes: [
-        "name",
-        "description",
-        [db.sequelize.col("genre.genre"), "genre"],
-        [db.sequelize.col("category.category"), "category"],
-      ],
-      where: {
-        developerId: developerId,
-      },
-      include: [
-        {
-          model: db.Genre,
-          attributes: [],
-        },
-        {
-          model: db.Category,
-          attributes: [],
-        },
-      ],
-      raw: true,
-      nest: true,
-    });
-
-    res.json({ success: 1, result: applications });
+    const applications: Application[] | undefined =
+      await getApplicationsByDeveloperId(developerId);
+    if (applications) res.json({ success: 1, result: applications });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const searchApplication = async (req: Request, res: Response) => {
+const searchApplicationController = async (req: Request, res: Response) => {
   try {
     const appQuery: string = req.query.app as string;
 
@@ -279,20 +253,21 @@ const searchApplication = async (req: Request, res: Response) => {
       return;
     }
 
-    const applications: Application[] | null = await getApplications({
+    const applications: Application[] | null = await getApplicationsByWhere({
       name: {
         [Op.like]: `%${appQuery}%`,
       },
     });
 
-    res.json({ success: 1, result: applications });
+    if (applications) res.json({ success: 1, result: applications });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getCountOfApplicationByCategory = async (
+const getCountOfApplicationByCategoryController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -308,32 +283,25 @@ const getCountOfApplicationByCategory = async (
       return;
     }
 
-    const appCounts: Application[] = await db.Application.findAll({
-      raw: true,
-      group: ["Application.categoryId"],
-      nest: true,
-      attributes: [
-        [db.sequelize.fn("count", db.sequelize.col("Application.id")), "count"],
-      ],
-      where: {
-        categoryId: categoryId,
-      },
-    });
+    const appCounts: Application | null =
+      await getCountOfApplicationByCategoryId(categoryId);
+    categoryId;
 
-    res.json({ success: 1, result: appCounts });
+    if (appCounts) res.json({ success: 1, result: appCounts });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 export {
-  getAllApplication,
-  createApplication,
-  editApplication,
-  getApplicationById,
-  deleteApplication,
-  getApplicationByGenre,
-  getApplicationsByDeveloper,
-  searchApplication,
-  getCountOfApplicationByCategory,
+  getAllApplicationController,
+  createApplicationController,
+  editApplicationController,
+  getApplicationByIdController,
+  deleteApplicationController,
+  getApplicationByGenreController,
+  getApplicationsByDeveloperController,
+  searchApplicationController,
+  getCountOfApplicationByCategoryController,
 };

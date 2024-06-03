@@ -1,10 +1,10 @@
 import express, { Router } from "express";
 import {
-  createCategory,
-  deleteCategoryById,
-  editCategoryById,
-  getAllCategory,
-  getCategoryById,
+  createCategoryController,
+  deleteCategoryByIdController,
+  editCategoryByIdController,
+  getAllCategoryController,
+  getCategoryByIdController,
 } from "../controllers/categoryController";
 import {
   createCategoryMiddleware,
@@ -16,11 +16,11 @@ const router: Router = express.Router();
 
 router
   .route("/")
-  .post(createCategoryMiddleware, createCategory)
-  .put(editCategoryMiddleware, editCategoryById)
-  .delete(deleteCategoryMiddleware, deleteCategoryById);
+  .post(createCategoryMiddleware, createCategoryController)
+  .put(editCategoryMiddleware, editCategoryByIdController)
+  .delete(deleteCategoryMiddleware, deleteCategoryByIdController);
 
-router.route("/all").get(getAllCategory);
-router.route("/:id").get(getCategoryById);
+router.route("/all").get(getAllCategoryController);
+router.route("/:id").get(getCategoryByIdController);
 
 export default router;

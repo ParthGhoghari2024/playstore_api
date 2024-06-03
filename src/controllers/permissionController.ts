@@ -3,23 +3,36 @@ import { logger } from "../utils/pino";
 import { IAppIdVersionId, IPermissionReqBody } from "../types/permission";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
 import db from "../models";
-import Application from "../models/applicationModel";
-import Version from "../models/versionModel";
 import { Op } from "sequelize";
-const getAllPermission = async (req: Request, res: Response): Promise<void> => {
+import {
+  deletePermission,
+  getAllPermission,
+  getApplicationPermissions,
+  getPermissionById,
+  getPermissionsByVersion,
+  getPermissionsTillVersion,
+  insertPermission,
+  updatePermission,
+} from "../services/permissionService";
+const getAllPermissionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const allPermissions: Permission[] = await db.Permission.findAll({
-      attributes: ["name", "versionId", "description"],
-    });
+    const allPermissions: Permission[] | undefined = await getAllPermission();
 
-    res.json({ success: 1, result: allPermissions });
+    if (allPermissions) res.json({ success: 1, result: allPermissions });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const createPermission = async (req: Request, res: Response): Promise<void> => {
+const createPermissionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { name, versionId, description }: IPermissionReqBody = req.body;
     name = name.trim();
@@ -31,18 +44,26 @@ const createPermission = async (req: Request, res: Response): Promise<void> => {
       description: description,
     };
 
-    await db.Permission.create(newPermission);
+    const createResult = await insertPermission(newPermission);
 
-    res.json({ success: 1 });
+    if (createResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const editPermission = async (req: Request, res: Response): Promise<void> => {
+const editPermissionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     let { id, name, versionId, description }: IPermissionReqBody = req.body;
+    if (!id) {
+      res.json({ success: 0, error: "No id to edit" });
+      return;
+    }
     name = name.trim();
     description = description.trim();
 
@@ -65,21 +86,25 @@ const editPermission = async (req: Request, res: Response): Promise<void> => {
     name && (newPermission.name = name);
     description && (newPermission.description = description);
 
-    await db.Permission.update(newPermission, {
-      where: {
-        id: id,
-      },
-    });
+    const updateResult = await updatePermission(newPermission, id!);
 
-    res.json({ success: 1 });
+    if (updateResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
-const deletePermission = async (req: Request, res: Response): Promise<void> => {
+const deletePermissionController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const id: string = req.body.id;
+    const id: number = Number(req.body.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No proper id" });
+      return;
+    }
 
     const findRes: Permission | null = await db.Permission.findOne({
       where: {
@@ -93,13 +118,10 @@ const deletePermission = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    await db.Permission.destroy({
-      where: {
-        id: id,
-      },
-    });
+    const deleteResult = await deletePermission(id);
 
-    res.json({ success: 1 });
+    if (deleteResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
@@ -110,138 +132,92 @@ const getPermissionByIdConroller = async (
   res: Response
 ): Promise<void> => {
   try {
-    const id: string = req.params.id;
-    const permission: Permission | null = await db.Permission.findOne({
-      attributes: ["name", "versionId", "description"],
-      where: {
-        id: id,
-      },
-    });
+    const id: number = Number(req.params.id);
+    if (!id || isNaN(id)) {
+      res.json({ success: 0, error: "No proper id" });
+      return;
+    }
+    const permission: Permission | null = await getPermissionById(id);
 
-    res.json({ success: 1, result: permission });
+    if (permission) res.json({ success: 1, result: permission });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getPermissionsByVersion = async (
+const getPermissionsByVersionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const versionId: string = req.params.versionId;
-    const permisions: Permission[] = await db.Permission.findAll({
-      raw: true,
-      attributes: [
-        "name",
-        "description",
-        [db.sequelize.col("version.version"), "versionName"],
-        [db.sequelize.col("version.description"), "versionDescription"],
-      ],
-      where: {
-        versionId: versionId,
-      },
-      include: {
-        model: db.Version,
-        attributes: [],
-      },
-    });
+    const versionId: number = Number(req.params.versionId);
+    if (!versionId || isNaN(versionId)) {
+      res.json({ success: 0, error: "Invalid version id" });
+      return;
+    }
+    const permisions: Permission[] | undefined = await getPermissionsByVersion(
+      versionId
+    );
 
-    res.json({ success: 1, result: permisions });
+    if (permisions) res.json({ success: 1, result: permisions });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getApplicationPermissions = async (
+const getApplicationPermissionsController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const appId: string = req.params.appId;
-    const permisions: Permission[] = await db.Permission.findAll({
-      raw: true,
-      attributes: [
-        "name",
-        "description",
-        [db.sequelize.col("version.id"), "versionId"],
-        [db.sequelize.col("version.application.id"), "appId"],
-      ],
-      include: [
-        {
-          model: db.Version,
-          attributes: [],
-          include: [
-            {
-              model: db.Application,
-              attributes: [],
-            },
-          ],
-          where: {
-            applicationId: appId,
-          },
-        },
-      ],
-    });
+    const appId: number = Number(req.params.appId);
+    if (!appId || isNaN(appId)) {
+      res.json({ success: 0, error: "Invalid app id" });
+      return;
+    }
 
-    res.json({ success: 1, result: permisions });
+    const permisions: Permission[] | undefined =
+      await getApplicationPermissions(appId);
+
+    if (permisions) res.json({ success: 1, result: permisions });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 
-const getPermissionsTillVersion = async (
+const getPermissionsTillVersionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const { appId, versionId }: IAppIdVersionId = req.body;
-    const permisions: Permission[] = await db.Permission.findAll({
-      raw: true,
-      attributes: [
-        "name",
-        "description",
-        [db.sequelize.col("version.id"), "versionId"],
-        [db.sequelize.col("version.application.id"), "appId"],
-      ],
-      include: [
-        {
-          model: db.Version,
-          attributes: [],
-          include: [
-            {
-              model: db.Application,
-              attributes: [],
-            },
-          ],
-          where: {
-            applicationId: appId,
-          },
-        },
-      ],
-      where: {
-        versionId: {
-          [Op.lte]: versionId,
-        },
-      },
-    });
+    if (!appId || !versionId) {
+      res.json({ success: 0, error: "App id and version id is required" });
+      return;
+    }
+    const permisions: Permission[] | undefined =
+      await getPermissionsTillVersion(appId, versionId);
 
-    res.json({ success: 1, result: permisions });
+    if (permisions) res.json({ success: 1, result: permisions });
+    else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
     res.json({ success: 0 });
   }
 };
 export {
-  createPermission,
-  getAllPermission,
-  editPermission,
-  deletePermission,
+  createPermissionController,
+  getAllPermissionController,
+  editPermissionController,
+  deletePermissionController,
   getPermissionByIdConroller,
-  getPermissionsByVersion,
-  getApplicationPermissions,
-  getPermissionsTillVersion,
+  getPermissionsByVersionController,
+  getApplicationPermissionsController,
+  getPermissionsTillVersionController,
 };
