@@ -14,6 +14,11 @@ import {
   deleteApplicationMiddleware,
   editApplicationMiddleware,
 } from "../middlewares/applicationMiddleware";
+import { uploadAppImageMiddleware } from "../middlewares/uploadAppImagesMiddleware";
+import {
+  getAppImagesByAppIdController,
+  uploadAppImageController,
+} from "../controllers/appImageController";
 
 const router: Router = express.Router();
 
@@ -31,4 +36,10 @@ router
   .get(getCountOfApplicationByCategoryController);
 
 router.route("/:id").get(getApplicationByIdController);
+
+router
+  .route("/images")
+  .post(uploadAppImageMiddleware, uploadAppImageController);
+
+router.route("/images/:appId").get(getAppImagesByAppIdController);
 export default router;

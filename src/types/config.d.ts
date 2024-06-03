@@ -1,4 +1,15 @@
 import { Sequelize } from "sequelize";
+declare global {
+  namespace Express {
+    export interface Request {
+      fileValidationError: string;
+    }
+    export interface User {
+      id: number;
+      role_id: number;
+    }
+  }
+}
 
 export interface IDbConfigObj {
   sequelize: Sequelize;

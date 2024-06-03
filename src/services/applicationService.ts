@@ -15,6 +15,7 @@ const getApplicationsByWhere = async (
         "description",
         [db.sequelize.col("genre"), "genre"],
         [db.sequelize.col("category"), "category"],
+        "downloads",
       ],
       where: where,
       include: [
@@ -74,6 +75,7 @@ const getApplicationById = async (id: number): Promise<Application | null> => {
         "id",
         "name",
         "description",
+        "downloads",
         [db.sequelize.col("genre"), "genre"],
         [db.sequelize.col("category"), "category"],
       ],
@@ -121,7 +123,7 @@ const getApplicationsByGenreId = async (
 ): Promise<Application[] | undefined> => {
   try {
     return await db.Application.findAll({
-      attributes: ["name", "description"],
+      attributes: ["name", "description", "downloads"],
       where: {
         genreId: genreId,
       },
@@ -139,6 +141,7 @@ const getApplicationsByDeveloperId = async (
       attributes: [
         "name",
         "description",
+        "downloads",
         [db.sequelize.col("genre.genre"), "genre"],
         [db.sequelize.col("category.category"), "category"],
       ],
@@ -183,6 +186,20 @@ const getCountOfApplicationByCategoryId = async (
     return null;
   }
 };
+
+const getAppIdIfExists = async (id: number): Promise<Application | null> => {
+  try {
+    return await db.Application.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
 export {
   getApplicationsByWhere,
   insertApplication,
@@ -192,4 +209,5 @@ export {
   getApplicationsByGenreId,
   getApplicationsByDeveloperId,
   getCountOfApplicationByCategoryId,
+  getAppIdIfExists,
 };

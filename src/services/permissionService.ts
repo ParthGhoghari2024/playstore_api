@@ -97,7 +97,6 @@ const getApplicationPermissions = async (appId: number) => {
         "name",
         "description",
         [db.sequelize.col("version.id"), "versionId"],
-        [db.sequelize.col("version.application.id"), "appId"],
       ],
       include: [
         {
@@ -157,6 +156,22 @@ const getPermissionsTillVersion = async (
     logger.error(error);
   }
 };
+
+const getPermissionIdIfExists = async (
+  id: number
+): Promise<Permission | null> => {
+  try {
+    return await db.Permission.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
 export {
   getAllPermission,
   insertPermission,
@@ -166,4 +181,5 @@ export {
   getPermissionsByVersion,
   getApplicationPermissions,
   getPermissionsTillVersion,
+  getPermissionIdIfExists,
 };

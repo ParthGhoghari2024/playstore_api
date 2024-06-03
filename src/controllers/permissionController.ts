@@ -2,13 +2,12 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import { IAppIdVersionId, IPermissionReqBody } from "../types/permission";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
-import db from "../models";
-import { Op } from "sequelize";
 import {
   deletePermission,
   getAllPermission,
   getApplicationPermissions,
   getPermissionById,
+  getPermissionIdIfExists,
   getPermissionsByVersion,
   getPermissionsTillVersion,
   insertPermission,
@@ -67,12 +66,7 @@ const editPermissionController = async (
     name = name.trim();
     description = description.trim();
 
-    const findRes: Permission | null = await db.Permission.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Permission | null = await getPermissionIdIfExists(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No permission to edit" });
@@ -86,7 +80,10 @@ const editPermissionController = async (
     name && (newPermission.name = name);
     description && (newPermission.description = description);
 
-    const updateResult = await updatePermission(newPermission, id!);
+    const updateResult: number[] | undefined = await updatePermission(
+      newPermission,
+      id!
+    );
 
     if (updateResult) res.json({ success: 1 });
     else res.json({ success: 0 });
@@ -106,12 +103,7 @@ const deletePermissionController = async (
       return;
     }
 
-    const findRes: Permission | null = await db.Permission.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Permission | null = await getPermissionIdIfExists(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No permission to delete" });

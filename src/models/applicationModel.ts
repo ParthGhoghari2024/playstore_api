@@ -7,6 +7,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  Default,
   DeletedAt,
   ForeignKey,
   HasMany,
@@ -20,6 +21,7 @@ import Category from "./categoryModel";
 import Genre from "./genreModel";
 import Version from "./versionModel";
 import InstalledApp from "./installedAppModel";
+import AppImages from "./appImageModel";
 export interface IApplicationAttributes {
   id?: number;
   name?: string;
@@ -27,6 +29,7 @@ export interface IApplicationAttributes {
   description?: string;
   categoryId?: number;
   genreId?: number;
+  downloads?: number;
 }
 
 export interface IApplicationCreationAttributes
@@ -68,6 +71,11 @@ class Application extends Model<
   @Column({ type: DataType.INTEGER })
   genreId!: number;
 
+  @AllowNull(false)
+  @Default(0)
+  @Column({ type: DataType.INTEGER })
+  downloads!: number;
+
   @CreatedAt
   createdAt?: Date;
   @UpdatedAt
@@ -89,6 +97,9 @@ class Application extends Model<
 
   @BelongsToMany(() => User, () => InstalledApp)
   users!: User[];
+
+  @HasMany(() => AppImages, "appId")
+  appImages!: AppImages[];
 }
 
 export default Application;

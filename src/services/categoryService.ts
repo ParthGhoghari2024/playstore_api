@@ -69,11 +69,47 @@ const deleteCategory = async (id: number): Promise<number | null> => {
     return null;
   }
 };
+const getCategoryIdByName = async (
+  category: string
+): Promise<number | null> => {
+  try {
+    const categoryRes: Category | null = await db.Category.findOne({
+      attributes: ["id"],
+      raw: true,
+      where: {
+        category: category,
+      },
+    });
 
+    if (categoryRes && categoryRes.id) {
+      return categoryRes.id;
+    }
+    return null;
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
+
+const getCategoryIdIfExists = async (id: number): Promise<Category | null> => {
+  try {
+    return await db.Category.findOne({
+      where: {
+        id: id,
+      },
+      attributes: ["id"],
+    });
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
 export {
   insertCategory,
   getAllCategory,
   getCategoryById,
   updateCategory,
   deleteCategory,
+  getCategoryIdByName,
+  getCategoryIdIfExists,
 };

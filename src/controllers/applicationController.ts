@@ -3,15 +3,12 @@ import { logger } from "../utils/pino";
 import Application, {
   IApplicationAttributes,
 } from "../models/applicationModel";
-import { getCategoryIdByName } from "../helper/categoryHelper";
-import { getGenreIdByName } from "../helper/genreHelper";
 import { IApplicationReqBody } from "../types/application";
 
-import db from "../models";
-import { getRoleByUserId } from "../helper/userHelper";
-import { Op, WhereOptions } from "sequelize";
+import { Op } from "sequelize";
 import {
   deleteApplication,
+  getAppIdIfExists,
   getApplicationById,
   getApplicationsByDeveloperId,
   getApplicationsByGenreId,
@@ -20,6 +17,9 @@ import {
   insertApplication,
   updateApplicationById,
 } from "../services/applicationService";
+import { getCategoryIdByName } from "../services/categoryService";
+import { getGenreIdByName } from "../services/genreService";
+import { getRoleByUserId } from "../services/userService";
 const getAllApplicationController = async (
   req: Request,
   res: Response
@@ -96,12 +96,7 @@ const editApplicationController = async (
     const categoryId: number | null = await getCategoryIdByName(category);
     const developerId: number = 1;
 
-    const findRes: Application | null = await db.Application.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Application | null = await getAppIdIfExists(id!);
 
     if (!findRes) {
       res.json({ success: 0, error: "No application to edit" });
@@ -173,12 +168,7 @@ const deleteApplicationController = async (
       res.json({ success: 0, error: "No id found" });
       return;
     }
-    const findRes: Application | null = await db.Application.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Application | null = await getAppIdIfExists(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No application to delete" });
@@ -294,6 +284,7 @@ const getCountOfApplicationByCategoryController = async (
     res.json({ success: 0 });
   }
 };
+
 export {
   getAllApplicationController,
   createApplicationController,

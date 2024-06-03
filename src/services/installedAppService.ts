@@ -1,4 +1,5 @@
 import db from "../models";
+import Application from "../models/applicationModel";
 import InstalledApp, {
   IInstalledAttributes,
 } from "../models/installedAppModel";
@@ -8,7 +9,19 @@ const insertInstalledApp = async (
   createInstalledApp: IInstalledAttributes
 ): Promise<InstalledApp | undefined> => {
   try {
-    return await db.InstalledApp.create(createInstalledApp);
+    const installedAppResult = await db.InstalledApp.create(createInstalledApp);
+
+    const updateDownloadCount: [
+      affectedRows: Application[],
+      affectedCount?: number | undefined
+    ] = await db.Application.increment("downloads", {
+      by: 1,
+      where: {
+        id: createInstalledApp.applicationId,
+      },
+    });
+
+    return installedAppResult;
   } catch (error) {
     logger.error(error);
   }

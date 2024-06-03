@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import db from "../models";
 import InstalledApp, {
   IInstalledAttributes,
 } from "../models/installedAppModel";
-import { getCategoryIdByName } from "../helper/categoryHelper";
-import { getGenreIdByName } from "../helper/genreHelper";
+
 import {
   getInstalledAppByAppIdUserId,
   getInstalledAppByCategoryId,
@@ -13,13 +11,20 @@ import {
   getInstalledApps,
   insertInstalledApp,
 } from "../services/installedAppService";
+import { getCategoryIdByName } from "../services/categoryService";
+import { getGenreIdByName } from "../services/genreService";
 const insertInstalledAppController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const applicationId: number = req.body.applicationId;
+    const applicationId: number = Number(req.body.applicationId);
     const userId: number = 1; //TODO:
+
+    if (!applicationId || isNaN(applicationId)) {
+      res.json({ success: 0, error: "Invalid application id" });
+      return;
+    }
 
     const createInstalledApp: IInstalledAttributes = {
       userId,
@@ -135,6 +140,7 @@ const getInstalledAppByGenreController = async (
     res.json({ success: 0 });
   }
 };
+
 export {
   insertInstalledAppController,
   getInstalledAppsController,

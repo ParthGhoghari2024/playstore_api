@@ -15,13 +15,13 @@ const corsOptions: ICorsOptions = {
   origin: [],
 };
 app.use(cors(corsOptions));
-
 // import db from "./config/db";
 
 // db.connectToDatabase();
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+
 import db from "./models";
 
 db.sequelize.authenticate().then(() => {
@@ -36,6 +36,7 @@ import permissionRoute from "./routes/permissionRoutes";
 import installedAppsRoutes from "./routes/installedAppsRoutes";
 import developerRoute from "./routes/developerRoutes";
 import { ICorsOptions } from "./types/config";
+import exp from "constants";
 
 app.use("/user", userRoute);
 app.use("/category", categoryRoute);

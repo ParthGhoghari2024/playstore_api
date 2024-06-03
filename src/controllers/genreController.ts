@@ -1,12 +1,7 @@
 import { Request, Response } from "express";
 
 import { logger } from "../utils/pino";
-import { getCategoryIdByName } from "../helper/categoryHelper";
-import db from "../models";
 import Genre, { IGenreAttributes } from "../models/genreModel";
-import Category from "../models/categoryModel";
-import Application from "../models/applicationModel";
-import { getGenreIdByName } from "../helper/genreHelper";
 import {
   deleteGenre,
   findGenreById,
@@ -15,6 +10,7 @@ import {
   insertGenre,
   updateGenre,
 } from "../services/genreService";
+import { getCategoryIdByName } from "../services/categoryService";
 const createGenreController = async (
   req: Request,
   res: Response
@@ -82,17 +78,15 @@ const editGenreByIdController = async (
       res.json({ success: 0, error: "No genre to edit" });
       return;
     }
-    const categoryId: Category | null = await db.Category.findOne({
-      attributes: ["id"],
-      raw: true,
-      where: {
-        category: category,
-      },
-    });
+    const categoryId: number | null = await getCategoryIdByName(category);
 
+    if (!categoryId) {
+      res.json({ success: 0, error: "Invalid category" });
+      return;
+    }
     const newGenre: IGenreAttributes = {
       genre: genre,
-      categoryId: categoryId!.id!,
+      categoryId: categoryId!,
     };
 
     const updateResult = await updateGenre(newGenre, id);

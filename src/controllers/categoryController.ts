@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 
 import { logger } from "../utils/pino";
-import db from "../models";
 import Category, { ICategoryAttributes } from "../models/categoryModel";
 import { ICategory } from "../types/categoryANDGenre";
 import {
   deleteCategory,
   getAllCategory,
   getCategoryById,
+  getCategoryIdIfExists,
   insertCategory,
   updateCategory,
 } from "../services/categoryService";
@@ -76,12 +76,7 @@ const editCategoryByIdController = async (
     let { id, category }: ICategory = req.body;
 
     category = category.trim();
-    const findRes: Category | null = await db.Category.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Category | null = await getCategoryIdIfExists(id!);
 
     if (!findRes) {
       res.json({ success: 0, error: "No category to edit" });
@@ -95,7 +90,6 @@ const editCategoryByIdController = async (
       category,
       id!
     );
-    console.log(editResult);
 
     if (editResult) res.json({ sucess: 1 });
     else res.json({ success: 0 });
@@ -117,12 +111,7 @@ const deleteCategoryByIdController = async (
       return;
     }
 
-    const findRes: Category | null = await db.Category.findOne({
-      where: {
-        id: id,
-      },
-      attributes: ["id"],
-    });
+    const findRes: Category | null = await getCategoryIdIfExists(id);
 
     if (!findRes) {
       res.json({ success: 0, error: "No category to delete" });

@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { logger } from "../utils/pino";
 import Version, { IVersionAttributes } from "../models/versionModel";
 import { IVersionReqBody } from "../types/version";
-import db from "../models";
 import {
   deleteVersion,
   getAllVersions,
@@ -41,7 +40,7 @@ const createVersionController = async (
       version: version,
       description: description,
     };
-    const insertResult = await insertVersion(newVersion);
+    const insertResult: Version | undefined = await insertVersion(newVersion);
 
     if (insertResult) res.json({ success: 1 });
     else res.json({ success: 0 });
@@ -74,7 +73,10 @@ const editVersionController = async (
     version && (newVersion.version = version);
     description && (newVersion.description = description);
 
-    const updateResult = await updateVersion(newVersion, id!);
+    const updateResult: number[] | undefined = await updateVersion(
+      newVersion,
+      id!
+    );
 
     if (updateResult) res.json({ success: 1 });
     else res.json({ success: 0 });
@@ -120,7 +122,7 @@ const deleteVersionController = async (
       res.json({ success: 0, error: "No version to delete" });
       return;
     }
-    const deleteResult = await deleteVersion(id);
+    const deleteResult: number | undefined = await deleteVersion(id);
 
     if (deleteResult) res.json({ success: 1 });
     else res.json({ success: 0 });

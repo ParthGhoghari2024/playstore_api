@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
-// import { User, UserAttributes } from "../models/User";
 
 import User, { IUserAttributes } from "../models/userModel";
-import db from "../models";
 import { logger } from "../utils/pino";
 import { INameEmail } from "../types/interface";
 import {
@@ -77,7 +75,7 @@ const deleteUserController = async (
       res.json({ success: 0, error: "No user to delete" });
       return;
     }
-    const deleteResult = await deleteUser(userId);
+    const deleteResult: number | undefined = await deleteUser(userId);
 
     if (deleteResult) res.json({ success: 1 });
     else res.json({ success: 0 });
