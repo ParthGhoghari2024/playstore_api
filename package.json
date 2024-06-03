@@ -5,13 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "copyAssets": "npx ts-node ./src/utils/copyAssets.ts",
-    "build": " npx tsc -w  & npm run copyAssets",
-    "prestart": "npx tsc & npm run copyAssets",
-    "start": "node dist/index.js",
-    "predev_old": "npm run build",
-    "dev_old": "  nodemon dist/index.js ",
-    "predev": "npm run build",
-    "dev": " nodemon dist/index.js"
+    "build": " npx tsc -w & npm run copyAssets",
+    "prestart": "npx tsc && npm run copyAssets",
+    "start": " node dist/index.js",
+    "predev": "npm run build ",
+    "dev": "npm run build && nodemon dist/index.js  "
   },
   "author": "",
   "license": "ISC",
@@ -40,6 +38,7 @@
     "@types/sequelize": "^4.28.20",
     "nodemon": "^3.1.0",
     "sequelize-cli": "^6.6.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "wait-on": "^7.2.0"
   }
 }

@@ -5,8 +5,19 @@ import { logger } from "../utils/pino";
 const getAllUser = async (): Promise<User[] | undefined> => {
   try {
     return await db.User.findAll({
-      attributes: ["id", "name", "email", "createdAt", "updatedAt"],
+      attributes: [
+        "id",
+        "name",
+        "email",
+        [db.sequelize.col("country.country"), "country"],
+      ],
       raw: true,
+      include: [
+        {
+          model: db.Country,
+          attributes: [],
+        },
+      ],
     });
   } catch (error) {
     logger.error(error);
@@ -70,10 +81,26 @@ const getRoleByUserId = async (uId: number): Promise<string | undefined> => {
     logger.error(error);
   }
 };
+
+const updateUser = async (
+  newUser: Partial<IUserAttributes>,
+  userId: number
+): Promise<number[] | undefined> => {
+  try {
+    return await db.User.update(newUser, {
+      where: {
+        id: userId,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
 export {
   getAllUser,
   insertUser,
   getUserIdIfExists,
   deleteUser,
   getRoleByUserId,
+  updateUser,
 };

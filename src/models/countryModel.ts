@@ -13,18 +13,19 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import User from "./userModel";
-interface IRoleAttributes {
+export interface ICountryAttributes {
   id?: number;
-  role: string;
+  country: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
 
-interface IRoleCreationAttributes extends Optional<IRoleAttributes, "id"> {}
+interface ICountryCreationAttributes
+  extends Optional<ICountryAttributes, "id"> {}
 
-@Table({ tableName: "roles" })
-class Role extends Model<IRoleAttributes, IRoleCreationAttributes> {
+@Table({ tableName: "countries" })
+class Country extends Model<ICountryAttributes, ICountryCreationAttributes> {
   @PrimaryKey
   @AutoIncrement
   @Column({ type: DataType.INTEGER })
@@ -32,7 +33,7 @@ class Role extends Model<IRoleAttributes, IRoleCreationAttributes> {
 
   @AllowNull(false)
   @Column({ type: DataType.STRING(255) })
-  role!: string;
+  country!: string;
 
   @CreatedAt
   createdAt?: Date;
@@ -45,4 +46,4 @@ class Role extends Model<IRoleAttributes, IRoleCreationAttributes> {
   users!: User[];
 }
 
-export default Role;
+export default Country;

@@ -19,12 +19,14 @@ import {
 import Role from "./roleModel";
 import Application from "./applicationModel";
 import InstalledApp from "./installedAppModel";
+import Country from "./countryModel";
 
 export interface IUserAttributes {
   id?: number;
   name: string;
   email: string;
   roleId: number;
+  countryId?: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -53,6 +55,11 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   @Column({ type: DataType.INTEGER })
   roleId!: number;
 
+  @AllowNull(false)
+  @ForeignKey(() => Country)
+  @Column({ type: DataType.INTEGER })
+  countryId!: number;
+
   @CreatedAt
   createdAt?: Date;
   @UpdatedAt
@@ -68,6 +75,9 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
 
   @BelongsTo(() => Role, "roleId")
   role!: Role;
+
+  @BelongsTo(() => Country, "countryId")
+  country!: Country;
 }
 
 export default User;

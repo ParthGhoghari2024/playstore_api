@@ -2,13 +2,15 @@ import { Request, Response } from "express";
 
 import User, { IUserAttributes } from "../models/userModel";
 import { logger } from "../utils/pino";
-import { INameEmail } from "../types/interface";
+import { INameEmailCountry, IUpdateUserBody } from "../types/interface";
 import {
   deleteUser,
   getAllUser,
   getUserIdIfExists,
   insertUser,
+  updateUser,
 } from "../services/userService";
+import { getCounryIdIfExists } from "../services/countryServices";
 
 interface IError extends Error {
   parent: {
@@ -40,14 +42,26 @@ const createUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    let { name, email }: INameEmail = req.body;
+    let { name, email, country }: INameEmailCountry = req.body;
     name = name.trim();
     email = email.trim();
     const roleId: number = 1; //TODO:
+
+    let countryId: number | undefined = 1; //default country
+    if (country) {
+      countryId = await getCounryIdIfExists(country);
+    }
+
+    if (!countryId) {
+      res.json({ success: 0, error: "No country found" });
+      return;
+    }
+
     const newUser: IUserAttributes = {
       name: name,
       email: email,
       roleId: roleId,
+      countryId: countryId,
     };
 
     const insertResult: User | undefined = await insertUser(newUser);
@@ -56,6 +70,46 @@ const createUserController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
+    res.json({ success: 0 });
+  }
+};
+
+const updateUserController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    //TODO: email cant be update
+    let { id, name, country }: IUpdateUserBody = req.body;
+    name && (name = name!.trim());
+    country && (country = country!.trim());
+    let countryId: number | undefined = 1; //default country
+    if (country) {
+      countryId = await getCounryIdIfExists(country);
+    }
+
+    if (!countryId) {
+      res.json({ success: 0, error: "No country found" });
+      return;
+    }
+    const userIdExists = await getUserIdIfExists(id);
+    if (!userIdExists) {
+      res.json({ success: 0, error: "no user found with id" });
+      return;
+    }
+
+    const newUser: Partial<IUserAttributes> = {};
+
+    name && (newUser.name = name);
+    country && (newUser.countryId = countryId);
+
+    const updateUserResult = await updateUser(newUser, id);
+
+    if (updateUserResult) res.json({ success: 1 });
+    else res.json({ succss: 0 });
+  } catch (error) {
+    logger.error(error);
+    res.json({ success: 0 });
   }
 };
 
@@ -81,6 +135,12 @@ const deleteUserController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
+    res.json({ success: 0 });
   }
 };
-export { getAllUserController, createUserController, deleteUserController };
+export {
+  getAllUserController,
+  createUserController,
+  deleteUserController,
+  updateUserController,
+};

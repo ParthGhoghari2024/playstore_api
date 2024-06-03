@@ -1,6 +1,7 @@
 import AppImages from "./appImageModel";
 import Application from "./applicationModel";
 import Category from "./categoryModel";
+import Country from "./countryModel";
 import Genre from "./genreModel";
 import InstalledApp from "./installedAppModel";
 import Permission from "./permissionModel";
@@ -17,4 +18,5 @@ export default {
   Version,
   InstalledApp,
   AppImages,
+  Country,
 };
