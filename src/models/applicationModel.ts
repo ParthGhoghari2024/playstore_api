@@ -22,6 +22,7 @@ import Genre from "./genreModel";
 import Version from "./versionModel";
 import InstalledApp from "./installedAppModel";
 import AppImages from "./appImageModel";
+import Rating from "./ratingModel";
 export interface IApplicationAttributes {
   id?: number;
   name?: string;
@@ -100,6 +101,9 @@ class Application extends Model<
 
   @HasMany(() => AppImages, "appId")
   appImages!: AppImages[];
+
+  @HasMany(() => Rating, "appId")
+  ratings!: Rating[];
 }
 
 export default Application;

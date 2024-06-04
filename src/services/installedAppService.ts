@@ -33,6 +33,8 @@ const getInstalledApps = async (
     return await db.InstalledApp.findAll({
       raw: true,
       attributes: [
+        "id",
+        [db.sequelize.col("application.id"), "appicationId"],
         [db.sequelize.col("application.name"), "name"],
         [db.sequelize.col("application.description"), "description"],
         [db.sequelize.col("application.category.category"), "category"],
@@ -91,6 +93,8 @@ const getInstalledAppByCategoryId = async (
         userId: userId,
       },
       attributes: [
+        "id",
+        [db.sequelize.col("application.id"), "appicationId"],
         [db.sequelize.col("application.name"), "name"],
         [db.sequelize.col("application.category.category"), "category"],
         [db.sequelize.col("application.genre.genre"), "genre"],
@@ -131,6 +135,8 @@ const getInstalledAppByGenreId = async (
         userId: userId,
       },
       attributes: [
+        "id",
+        [db.sequelize.col("application.id"), "appicationId"],
         [db.sequelize.col("application.name"), "name"],
         [db.sequelize.col("application.genre.genre"), "genre"],
       ],
@@ -154,10 +160,34 @@ const getInstalledAppByGenreId = async (
     logger.error(error);
   }
 };
+
+const isAppInstalled = async (
+  appId: number,
+  userId: number
+): Promise<boolean | null> => {
+  try {
+    const fetchedId = await db.InstalledApp.findOne({
+      where: {
+        applicationId: appId,
+        userId: userId,
+      },
+    });
+
+    console.log(fetchedId);
+
+    if (fetchedId && fetchedId.id) return true;
+
+    return false;
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
 export {
   insertInstalledApp,
   getInstalledApps,
   getInstalledAppByAppIdUserId,
   getInstalledAppByCategoryId,
   getInstalledAppByGenreId,
+  isAppInstalled,
 };

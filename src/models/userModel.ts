@@ -20,6 +20,7 @@ import Role from "./roleModel";
 import Application from "./applicationModel";
 import InstalledApp from "./installedAppModel";
 import Country from "./countryModel";
+import Rating from "./ratingModel";
 
 export interface IUserAttributes {
   id?: number;
@@ -66,7 +67,7 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
-
+  
   @HasMany(() => Application, "developerId")
   application!: Application[];
 
@@ -78,6 +79,9 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
 
   @BelongsTo(() => Country, "countryId")
   country!: Country;
+
+  @HasMany(() => Rating, "userId")
+  ratings!: Rating[];
 }
 
 export default User;

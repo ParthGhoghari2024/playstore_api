@@ -15,9 +15,6 @@ const corsOptions: ICorsOptions = {
   origin: [],
 };
 app.use(cors(corsOptions));
-// import db from "./config/db";
-
-// db.connectToDatabase();
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -35,8 +32,8 @@ import versionRoute from "./routes/versionRoutes";
 import permissionRoute from "./routes/permissionRoutes";
 import installedAppsRoutes from "./routes/installedAppsRoutes";
 import developerRoute from "./routes/developerRoutes";
+import ratingRoute from "./routes/ratingRoutes";
 import { ICorsOptions } from "./types/config";
-import exp from "constants";
 
 app.use("/user", userRoute);
 app.use("/category", categoryRoute);
@@ -46,6 +43,7 @@ app.use("/version", versionRoute);
 app.use("/permission", permissionRoute);
 app.use("/installedApps", installedAppsRoutes);
 app.use("/developer", developerRoute);
+app.use("/rating", ratingRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello ts node");

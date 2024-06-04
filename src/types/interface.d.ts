@@ -16,3 +16,13 @@ export interface IUpdateUserBody {
   email?: string;
   country?: string;
 }
+
+export interface IInsertRatingsBody {
+  appId: number;
+  comment?: string;
+  rating: number;
+}
+
+export interface IEditRatingsBody extends IInsertRatingsBody {
+  id: number;
+}

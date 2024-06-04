@@ -5,6 +5,7 @@ import Country from "./countryModel";
 import Genre from "./genreModel";
 import InstalledApp from "./installedAppModel";
 import Permission from "./permissionModel";
+import Rating from "./ratingModel";
 import Role from "./roleModel";
 import User from "./userModel";
 import Version from "./versionModel";
@@ -19,4 +20,5 @@ export default {
   InstalledApp,
   AppImages,
   Country,
+  Rating,
 };
