@@ -77,11 +77,13 @@ export default {
       await queryInterface.dropTable("installedApps", { transaction });
       await queryInterface.removeConstraint(
         "installedApps",
-        "userId_foreignkey"
+        "userId_foreignkey",
+        { transaction }
       );
       await queryInterface.removeConstraint(
         "installedApps",
-        "applicationId_foreignkey"
+        "applicationId_foreignkey",
+        { transaction }
       );
 
       await transaction.commit();

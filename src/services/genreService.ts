@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import db from "../models";
 import Genre, { IGenreAttributes } from "../models/genreModel";
 import { logger } from "../utils/pino";

@@ -66,7 +66,9 @@ export default {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.dropTable("countries", { transaction });
-      await queryInterface.removeConstraint("countries", "unique_country");
+      await queryInterface.removeConstraint("countries", "unique_country", {
+        transaction,
+      });
 
       await queryInterface.removeColumn("users", "countryId", { transaction });
 

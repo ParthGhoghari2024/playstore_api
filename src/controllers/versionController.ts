@@ -56,8 +56,8 @@ const editVersionController = async (
 ): Promise<void> => {
   try {
     let { id, applicationId, version, description }: IVersionReqBody = req.body;
-    version = version.trim();
-    description = description.trim();
+    version && (version = version.trim());
+    description && (description = description.trim());
 
     const findRes: Version | null = await getVersionIdIfExists(id!);
 

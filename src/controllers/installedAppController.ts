@@ -57,7 +57,7 @@ const getInstalledAppsController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.jsonp({ success: 0 });
+    res.json({ success: 0 });
   }
 };
 

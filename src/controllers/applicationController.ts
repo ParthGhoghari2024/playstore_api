@@ -89,10 +89,10 @@ const editApplicationController = async (
   try {
     let { id, name, description, category, genre }: IApplicationReqBody =
       req.body;
-    name = name.trim();
-    description = description.trim();
-    category = category.trim();
-    genre = genre.trim();
+    name && (name = name.trim());
+    description && (description = description.trim());
+    category && (category = category.trim());
+    genre && (genre = genre.trim());
     const categoryId: number | null = await getCategoryIdByName(category);
     const developerId: number = 1;
 
@@ -111,6 +111,8 @@ const editApplicationController = async (
       res.json({ success: 0, error: "Wrong Genre" });
       return;
     }
+
+    console.log(genreId);
 
     const newApplication: IApplicationAttributes = {
       developerId: developerId,
@@ -264,6 +266,10 @@ const getCountOfApplicationByCategoryController = async (
   try {
     let category: string = req.params.category;
 
+    if (!category) {
+      res.json({ success: 0, error: "No Category provided" });
+      return;
+    }
     category = category.trim();
 
     const categoryId: number | null = await getCategoryIdByName(category);
@@ -275,7 +281,6 @@ const getCountOfApplicationByCategoryController = async (
 
     const appCounts: Application | null =
       await getCountOfApplicationByCategoryId(categoryId);
-    categoryId;
 
     if (appCounts) res.json({ success: 1, result: appCounts });
     else res.json({ success: 0 });
