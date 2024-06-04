@@ -12,6 +12,10 @@ const uploadAppImageController = async (
   res: Response
 ): Promise<void> => {
   try {
+    if (req.fileValidationError) {
+      res.json({ success: 0, error: "File type invalid" });
+      return;
+    }
     const appId: number = Number(req.body.appId);
     if (!appId || isNaN(appId)) {
       res.json({ success: 0, error: "No app id provided" });

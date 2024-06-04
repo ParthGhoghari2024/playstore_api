@@ -6,7 +6,7 @@ import { logger } from "../utils/pino";
 const getAllPermission = async (): Promise<Permission[] | undefined> => {
   try {
     return await db.Permission.findAll({
-      attributes: ["name", "versionId", "description"],
+      attributes: ["id", "name", "versionId", "description"],
     });
   } catch (error) {
     logger.error(error);

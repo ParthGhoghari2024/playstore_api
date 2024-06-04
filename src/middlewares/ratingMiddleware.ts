@@ -30,7 +30,7 @@ const createRatingMiddleware = async (
 };
 
 const updateRatingSchema: Joi.ObjectSchema = Joi.object({
-  id: Joi.number().required(),
+  appId: Joi.number().required(),
   comment: Joi.string().trim().optional(),
   rating: Joi.number().optional().min(0).max(5),
 });

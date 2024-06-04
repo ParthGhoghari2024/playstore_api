@@ -3,61 +3,64 @@ import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
-  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
   DeletedAt,
   ForeignKey,
   HasMany,
-  Index,
   Model,
   PrimaryKey,
   Table,
   Unique,
   UpdatedAt,
 } from "sequelize-typescript";
-import User from "./userModel";
 import Application from "./applicationModel";
+import Version from "./versionModel";
 
-export interface IRatingAttributes {
+export interface IApkAttributes {
   id?: number;
-  userId: number;
   appId: number;
-  comment?: string;
-  rating: number;
+  versionId: number;
+  original_filename: string;
+  new_filename: string;
+  path: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
 
-interface IRatingCreationAttributes extends Optional<IRatingAttributes, "id"> {}
+interface IApkCreationAttributes extends Optional<IApkAttributes, "id"> {}
 @Table({
-  tableName: "ratings",
+  tableName: "apkFiles",
 })
-class Rating extends Model<IRatingAttributes, IRatingCreationAttributes> {
+class ApkFile extends Model<IApkAttributes, IApkCreationAttributes> {
   @PrimaryKey
   @AutoIncrement
   @Column({ type: DataType.INTEGER })
   id!: number;
 
   @AllowNull(false)
-  @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER })
-  userId!: number;
-
-  @AllowNull(false)
   @ForeignKey(() => Application)
   @Column({ type: DataType.INTEGER })
   appId!: number;
 
-  @AllowNull(true)
-  @Column({ type: DataType.TEXT })
-  comment!: string;
+  @AllowNull(false)
+  @ForeignKey(() => Application)
+  @Column({ type: DataType.INTEGER })
+  versionId!: number;
 
   @AllowNull(false)
-  @Column({ type: DataType.INTEGER })
-  rating!: number;
+  @Column({ type: DataType.STRING(255) })
+  original_filename!: string;
+
+  @AllowNull(false)
+  @Column({ type: DataType.STRING(255) })
+  new_filename!: string;
+
+  @AllowNull(false)
+  @Column({ type: DataType.TEXT })
+  path!: string;
 
   @CreatedAt
   createdAt?: Date;
@@ -66,11 +69,11 @@ class Rating extends Model<IRatingAttributes, IRatingCreationAttributes> {
   @DeletedAt
   deletedAt?: Date;
 
-  @BelongsTo(() => User, "userId")
-  user!: User;
-
   @BelongsTo(() => Application, "appId")
   application!: Application;
+
+  @BelongsTo(() => Version, "versionId")
+  version!: Version;
 }
 
-export default Rating;
+export default ApkFile;

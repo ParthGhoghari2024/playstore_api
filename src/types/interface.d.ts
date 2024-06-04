@@ -26,3 +26,26 @@ export interface IInsertRatingsBody {
 export interface IEditRatingsBody extends IInsertRatingsBody {
   id: number;
 }
+
+export interface IReducedRatingObj {
+  comment?: string;
+  rating: number;
+  user: {
+    name: string;
+    email: string;
+  };
+}
+export interface IReducedRating {
+  appId: any;
+  ratings: IReducedRatingObj[];
+}
+
+export interface IPermissionObj {
+  id?: number;
+  name: string;
+  description: string;
+}
+export interface IReducedPermission {
+  versionId: number;
+  permission: IPermissionObj[];
+}

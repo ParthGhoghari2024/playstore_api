@@ -19,8 +19,8 @@ const createGenreController = async (
     let genre: string = req.body.genre;
     let category: string = req.body.category;
 
-    genre = genre.trim();
-    category = category.trim();
+    genre && (genre = genre.trim());
+    category && (category = category.trim());
 
     const categoryId: number | null = await getCategoryIdByName(category);
 
@@ -32,7 +32,7 @@ const createGenreController = async (
       genre: genre,
       categoryId: categoryId!,
     };
-    const insertResult = await insertGenre(newGenre);
+    const insertResult: Genre | undefined = await insertGenre(newGenre);
     if (insertResult) res.json({ success: 1 });
     else res.json({ success: 0 });
   } catch (error) {
@@ -69,8 +69,8 @@ const editGenreByIdController = async (
       res.json({ success: 0, error: "No id found" });
       return;
     }
-    genre = genre.trim();
-    category = category.trim();
+    genre && (genre = genre.trim());
+    category && (category = category.trim());
 
     const findRes: Genre | null = await findGenreById(id);
 
@@ -89,7 +89,7 @@ const editGenreByIdController = async (
       categoryId: categoryId!,
     };
 
-    const updateResult = await updateGenre(newGenre, id);
+    const updateResult: number[] | undefined = await updateGenre(newGenre, id);
 
     if (updateResult) res.json({ success: 1 });
     else res.json({ success: 0 });
@@ -115,7 +115,7 @@ const deleteGenereByIdController = async (
       res.json({ success: 0, error: "No genre to delete" });
       return;
     }
-    const deleteResult = await deleteGenre(id);
+    const deleteResult: number | undefined = await deleteGenre(id);
 
     if (deleteResult) res.json({ success: 1 });
     else res.json({ success: 0 });

@@ -19,7 +19,7 @@ const insertInstalledAppController = async (
 ): Promise<void> => {
   try {
     const applicationId: number = Number(req.body.applicationId);
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
 
     if (!applicationId || isNaN(applicationId)) {
       res.json({ success: 0, error: "Invalid application id" });
@@ -47,7 +47,7 @@ const getInstalledAppsController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId = 1; //TODO:
+    const userId = req.cookies.userId || 1; //TODO:
 
     const installedApps: InstalledApp[] | undefined = await getInstalledApps(
       userId
@@ -72,7 +72,7 @@ const isAppInstalledController = async (
       res.json({ success: 0, error: "No App id found" });
       return;
     }
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
     const result: InstalledApp | null = await getInstalledAppByAppIdUserId(
       appId,
       userId
@@ -95,9 +95,13 @@ const getInstalledAppByCategoryController = async (
 ): Promise<void> => {
   try {
     let category: string = req.params.category;
-    category = category.trim();
+    if (!category) {
+      res.json({ success: 0, error: "Invalid category" });
+      return;
+    }
+    category && (category = category.trim());
 
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
     const categoryId: number | null = await getCategoryIdByName(category);
     if (!categoryId) {
       res.json({ sucess: 0, error: "No category found" });
@@ -121,7 +125,7 @@ const getInstalledAppByGenreController = async (
   try {
     let genre: string = req.params.genre;
     genre = genre.trim();
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
 
     const genreId: number | null = await getGenreIdByName(genre);
 

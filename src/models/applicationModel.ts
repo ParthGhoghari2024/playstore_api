@@ -23,6 +23,7 @@ import Version from "./versionModel";
 import InstalledApp from "./installedAppModel";
 import AppImages from "./appImageModel";
 import Rating from "./ratingModel";
+import ApkFile from "./apkFileModel";
 export interface IApplicationAttributes {
   id?: number;
   name?: string;
@@ -104,6 +105,9 @@ class Application extends Model<
 
   @HasMany(() => Rating, "appId")
   ratings!: Rating[];
+
+  @HasMany(() => ApkFile, "appId")
+  apkFiles!: ApkFile[];
 }
 
 export default Application;

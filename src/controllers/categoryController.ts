@@ -18,6 +18,7 @@ const createCategoryController = async (
 ): Promise<void> => {
   try {
     let category: string = req.body.category;
+
     category = category.trim();
 
     const newCategory: ICategoryAttributes = {
@@ -75,7 +76,7 @@ const editCategoryByIdController = async (
   try {
     let { id, category }: ICategory = req.body;
 
-    category = category.trim();
+    category && (category = category.trim());
     const findRes: Category | null = await getCategoryIdIfExists(id!);
 
     if (!findRes) {

@@ -1,19 +1,19 @@
 import multer from "multer";
 import { Request, Response, NextFunction, RequestHandler } from "express";
-const maxSize: number = 10 * 1024 * 1024; // 10MB
+const maxSize: number = 1024 * 1024 * 1024; // 1024MB
 import fs from "fs";
 import path from "path";
-const appImageDir: string | undefined = process.env.APP_IMG_UPLOAD_PATH;
+const apkUploadDir: string | undefined = process.env.APK_UPLOAD_PATH;
 const storage: multer.StorageEngine = multer.diskStorage({
   destination: (
     req: Request,
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) => {
-    if (!fs.existsSync(appImageDir + "/" + req.body.appId)) {
-      fs.mkdirSync(appImageDir + "/" + req.body.appId, { recursive: true }); //mkdir if not exist
+    if (!fs.existsSync(apkUploadDir + "/" + req.body.appId)) {
+      fs.mkdirSync(apkUploadDir + "/" + req.body.appId, { recursive: true }); //mkdir if not exist
     }
-    cb(null, appImageDir + "/" + req.body.appId);
+    cb(null, apkUploadDir + "/" + req.body.appId);
   },
   filename: (
     req: Request,
@@ -21,13 +21,20 @@ const storage: multer.StorageEngine = multer.diskStorage({
     cb: (error: Error | null, destination: string) => void
   ) => {
     const newFileName: string =
-      "app_" + req.body.appId + "_" + Date.now() + "_" + file.originalname;
-
+      "app_" +
+      req.body.appId +
+      "_" +
+      "version" +
+      req.body.versionId +
+      "_" +
+      Date.now() +
+      "_" +
+      file.originalname;
     cb(null, newFileName);
   },
 });
-const whitelistMimeType: string[] = ["image/jpeg", "image/png"];
-const whitelistExtentions: string[] = [".jpg", ".jpeg", ".png"];
+// const whitelistMimeType: string[] = ["image/jpeg", "image/png"];
+const whitelistExtentions: string[] = [".apk"];
 const upload: RequestHandler = multer({
   storage: storage,
   limits: { fileSize: maxSize },
@@ -38,7 +45,7 @@ const upload: RequestHandler = multer({
   ) {
     const fileExtention: string = path.extname(file.originalname).toLowerCase();
     if (
-      !whitelistMimeType.includes(file.mimetype) ||
+      // !whitelistMimeType.includes(file.mimetype) ||
       !whitelistExtentions.includes(fileExtention)
     ) {
       req.fileValidationError = "File type Error";
@@ -46,9 +53,9 @@ const upload: RequestHandler = multer({
     }
     cb(null, true);
   },
-}).array("appImage");
+}).single("apkFile");
 
-const uploadAppImageMiddleware: RequestHandler = (
+const uploadApkMiddleware: RequestHandler = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -66,4 +73,4 @@ const uploadAppImageMiddleware: RequestHandler = (
     next();
   });
 };
-export { uploadAppImageMiddleware };
+export { uploadApkMiddleware };

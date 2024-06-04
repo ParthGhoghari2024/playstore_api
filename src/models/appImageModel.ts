@@ -31,7 +31,9 @@ export interface IAppImagesAttributes {
 
 interface IAppImagesCreationAttributes
   extends Optional<IAppImagesAttributes, "id"> {}
-@Table({ tableName: "appImages" })
+@Table({
+  tableName: "appImages",
+})
 class AppImages extends Model<
   IAppImagesAttributes,
   IAppImagesCreationAttributes

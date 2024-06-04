@@ -10,6 +10,7 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
 import User from "./userModel";
@@ -32,6 +33,7 @@ class Country extends Model<ICountryAttributes, ICountryCreationAttributes> {
   id!: number;
 
   @AllowNull(false)
+  @Unique(true)
   @Column({ type: DataType.STRING(255) })
   country!: string;
 

@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { logger } from "../utils/pino";
-import { IEditRatingsBody, IInsertRatingsBody } from "../types/interface";
+import {
+  IEditRatingsBody,
+  IInsertRatingsBody,
+  IReducedRating,
+} from "../types/interface";
 import Rating, { IRatingAttributes } from "../models/ratingModel";
 import {
   deleteRating,
@@ -20,7 +24,7 @@ const createRatingController = async (
 ): Promise<void> => {
   try {
     let { appId, comment, rating }: IInsertRatingsBody = req.body;
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
 
     const appExists: Application | null = await getAppIdIfExists(appId);
     if (!appExists) {
@@ -32,8 +36,6 @@ const createRatingController = async (
       appId,
       userId
     );
-
-    console.log(isAppInstalledResult);
 
     if (!isAppInstalledResult || !isAppInstalledResult) {
       res.json({
@@ -75,7 +77,23 @@ const getRatingsByAppIdController = async (
 
     const getResult: Rating[] | undefined = await getRatingsByAppId(appId);
 
-    if (getResult) res.json({ success: 1, result: getResult });
+    const reducedResult = getResult?.reduce(
+      (prev: IReducedRating, cur: Rating) => {
+        prev.ratings.push({
+          comment: cur.comment,
+          rating: cur.rating,
+          user: cur.user,
+        });
+
+        return prev;
+      },
+      {
+        appId: appId,
+        ratings: [],
+      }
+    );
+
+    if (getResult) res.json({ success: 1, result: reducedResult });
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
@@ -88,16 +106,29 @@ const editRatingController = async (
   res: Response
 ): Promise<void> => {
   try {
-    let { id, comment, rating }: IEditRatingsBody = req.body;
+    let { appId, comment, rating }: IEditRatingsBody = req.body;
 
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
     const newRating: Partial<IRatingAttributes> = {
       userId: userId,
     };
 
-    const ratingExists: Rating | null = await getRatingIdIfExists(id);
-    if (!ratingExists) {
-      res.json({ success: 0, error: "Invalid rating id" });
+    const appExists: Application | null = await getAppIdIfExists(appId);
+    if (!appExists) {
+      res.json({ success: 0, error: "Invalid App id" });
+      return;
+    }
+
+    const isAppInstalledResult: boolean | null = await isAppInstalled(
+      appId,
+      userId
+    );
+
+    if (!isAppInstalledResult || !isAppInstalledResult) {
+      res.json({
+        success: 0,
+        error: { message: "User haven't installed app", id: "notInstalledApp" },
+      });
       return;
     }
 
@@ -107,7 +138,8 @@ const editRatingController = async (
 
     const updateResult: number[] | undefined = await updateRating(
       newRating,
-      id
+      appId,
+      userId
     );
     if (updateResult) res.json({ success: 1 });
     else res.json({ success: 0 });
@@ -123,7 +155,7 @@ const deleteRatingController = async (
 ): Promise<void> => {
   try {
     const appId: number = Number(req.body.appId);
-    const userId: number = 1; //TODO:
+    const userId: number = req.cookies.userId || 1; //TODO:
     if (!appId || isNaN(appId)) {
       res.json({ success: 0, error: "Invalid application id" });
       return;
@@ -147,6 +179,7 @@ const deleteRatingController = async (
     logger.error(error);
   }
 };
+
 export {
   createRatingController,
   getRatingsByAppIdController,

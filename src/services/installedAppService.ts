@@ -173,8 +173,6 @@ const isAppInstalled = async (
       },
     });
 
-    console.log(fetchedId);
-
     if (fetchedId && fetchedId.id) return true;
 
     return false;

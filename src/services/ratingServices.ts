@@ -35,12 +35,14 @@ const getRatingsByAppId = async (appId: number) => {
 
 const updateRating = async (
   newRating: Partial<IRatingAttributes>,
-  id: number
+  appId: number,
+  userId: number
 ): Promise<number[] | undefined> => {
   try {
     return await db.Rating.update(newRating, {
       where: {
-        id: id,
+        appId: appId,
+        userId: userId,
       },
     });
   } catch (error) {

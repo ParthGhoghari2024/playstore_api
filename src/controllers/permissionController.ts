@@ -13,6 +13,7 @@ import {
   insertPermission,
   updatePermission,
 } from "../services/permissionService";
+import { IReducedPermission } from "../types/interface";
 const getAllPermissionController = async (
   req: Request,
   res: Response
@@ -20,7 +21,45 @@ const getAllPermissionController = async (
   try {
     const allPermissions: Permission[] | undefined = await getAllPermission();
 
-    if (allPermissions) res.json({ success: 1, result: allPermissions });
+    /*
+      {
+        versionId : 1
+        permission:{
+          id,name,description
+        }
+      },
+      {
+
+      }..
+    */
+
+    const reducedPermissions = allPermissions?.reduce(
+      (prev: IReducedPermission[], cur: Permission) => {
+        const index = prev.findIndex((ele) => ele.versionId === cur.versionId);
+        if (index === -1) {
+          prev.push({
+            versionId: cur.versionId,
+            permission: [
+              {
+                id: cur.id,
+                name: cur.name,
+                description: cur.description,
+              },
+            ],
+          });
+        } else {
+          prev[index].permission.push({
+            id: cur.id,
+            name: cur.name,
+            description: cur.description,
+          });
+        }
+        return prev;
+      },
+      []
+    );
+
+    if (allPermissions) res.json({ success: 1, result: reducedPermissions });
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
@@ -43,7 +82,9 @@ const createPermissionController = async (
       description: description,
     };
 
-    const createResult = await insertPermission(newPermission);
+    const createResult: Permission | undefined = await insertPermission(
+      newPermission
+    );
 
     if (createResult) res.json({ success: 1 });
     else res.json({ success: 0 });
@@ -63,8 +104,8 @@ const editPermissionController = async (
       res.json({ success: 0, error: "No id to edit" });
       return;
     }
-    name = name.trim();
-    description = description.trim();
+    name && (name = name.trim());
+    description && (description = description.trim());
 
     const findRes: Permission | null = await getPermissionIdIfExists(id);
 
@@ -110,7 +151,7 @@ const deletePermissionController = async (
       return;
     }
 
-    const deleteResult = await deletePermission(id);
+    const deleteResult: number | undefined = await deletePermission(id);
 
     if (deleteResult) res.json({ success: 1 });
     else res.json({ success: 0 });

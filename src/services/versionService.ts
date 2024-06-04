@@ -116,6 +116,23 @@ const getAppVersions = async (
     logger.error(error);
   }
 };
+
+const getAppIdByVerstionId = async (
+  versionId: number
+): Promise<number | undefined> => {
+  try {
+    const result: Version | null = await db.Version.findOne({
+      where: {
+        id: versionId,
+      },
+      attributes: ["applicationId"],
+    });
+
+    return result?.applicationId;
+  } catch (error) {
+    logger.error(error);
+  }
+};
 export {
   getAllVersions,
   insertVersion,
@@ -124,4 +141,5 @@ export {
   getVersionById,
   deleteVersion,
   getAppVersions,
+  getAppIdByVerstionId,
 };

@@ -16,6 +16,7 @@ import {
 } from "sequelize-typescript";
 import Application from "./applicationModel";
 import Permission from "./permissionModel";
+import ApkFile from "./apkFileModel";
 export interface IVersionAttributes {
   id?: number;
   applicationId: number;
@@ -61,6 +62,9 @@ class Version extends Model<IVersionAttributes, IVersionCreationAttributes> {
 
   @HasMany(() => Permission, "versionId")
   permission!: Permission[];
+
+  @HasMany(() => ApkFile, "versionId")
+  apkFiles!: ApkFile[];
 }
 
 export default Version;
