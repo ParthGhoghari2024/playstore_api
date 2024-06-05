@@ -55,7 +55,9 @@ const getAppImagesByAppIdController = async (
       return;
     }
 
-    const appImages = await getAppImagesDataByAppId(appId);
+    const appImages: AppImages[] | undefined = await getAppImagesDataByAppId(
+      appId
+    );
 
     if (appImages) res.json({ success: 1, result: appImages });
     else res.json({ succss: 0 });

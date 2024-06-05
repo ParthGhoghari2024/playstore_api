@@ -96,11 +96,46 @@ const updateUser = async (
     logger.error(error);
   }
 };
+
+const getUserbyId = async (userId: number): Promise<User | null> => {
+  try {
+    return await db.User.findOne({
+      where: {
+        id: userId,
+      },
+      attributes: ["id", "name", "email"],
+      raw: true,
+    });
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
+
+const getUserDataWithPasswordByEmail = async (
+  email: string
+): Promise<User | null> => {
+  try {
+    return await db.User.findOne({
+      where: {
+        email: email,
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "deletedAt"],
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
 export {
+  getUserDataWithPasswordByEmail,
   getAllUser,
   insertUser,
   getUserIdIfExists,
   deleteUser,
   getRoleByUserId,
   updateUser,
+  getUserbyId,
 };

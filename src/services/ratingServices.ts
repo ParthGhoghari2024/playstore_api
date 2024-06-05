@@ -89,6 +89,7 @@ const deleteRating = async (id: number): Promise<number | undefined> => {
     logger.error(error);
   }
 };
+
 export {
   insertRating,
   getRatingsByAppId,

@@ -13,6 +13,7 @@ const uploadApkFileController = async (
   try {
     const appId: number = Number(req.body.appId);
     const versionId: number = Number(req.body.versionId);
+
     const reqFile: Express.Multer.File | undefined = req.file;
     if (!appId || isNaN(appId)) {
       res.json({ success: 0, error: "app id not provided" });
@@ -42,7 +43,6 @@ const uploadApkFileController = async (
       appId,
       versionId
     );
-
     if (apkIdIfExists && apkIdIfExists.id) {
       res.json({ success: 0, error: "Apk already present for this version" });
       return;

@@ -5,6 +5,7 @@ const userSignupSchema: Joi.ObjectSchema = Joi.object({
   name: Joi.string().trim().required().max(255),
   email: Joi.string().trim().email().required().max(255),
   country: Joi.string().trim().max(255).optional(),
+  password: Joi.string().trim().required(),
 });
 
 const createUserMiddleware = async (

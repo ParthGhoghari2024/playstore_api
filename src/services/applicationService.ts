@@ -11,6 +11,7 @@ const getApplicationsByWhere = async (
   try {
     const result: Application[] = await db.Application.findAll({
       attributes: [
+        "id",
         "name",
         "description",
         [db.sequelize.col("genre"), "genre"],
@@ -139,6 +140,7 @@ const getApplicationsByDeveloperId = async (
   try {
     return await db.Application.findAll({
       attributes: [
+        "id",
         "name",
         "description",
         "downloads",

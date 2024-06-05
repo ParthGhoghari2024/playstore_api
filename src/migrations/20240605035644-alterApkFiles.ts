@@ -5,46 +5,45 @@ export default {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.removeConstraint(
-        "installedApps",
-        "userId_foreignkey",
-        { transaction }
-      );
-      await queryInterface.removeConstraint(
-        "installedApps",
-        "applicationId_foreignkey",
-        { transaction }
-      );
-      await queryInterface.removeConstraint(
-        "installedApps",
-        "unique_user_app_pair",
-        {
-          transaction,
-        }
+        "apkFiles",
+        "apkFiles_foreignkey_appId"
       );
 
-      await queryInterface.addConstraint("installedApps", {
-        fields: ["userId"],
-        type: "foreign key",
-        name: "userId_foreignkey",
-        references: {
-          table: "users",
-          field: "id",
-        },
-        onDelete: "cascade",
-        onUpdate: "cascade",
+      await queryInterface.removeConstraint(
+        "apkFiles",
+        "apkFiles_foreignkey_versionId",
+        { transaction }
+      );
+      await queryInterface.removeConstraint("apkFiles", "unique_apkFiles", {
+        transaction,
       });
 
-      await queryInterface.addConstraint("installedApps", {
-        fields: ["applicationId"],
+      await queryInterface.addConstraint("apkFiles", {
+        fields: ["appId"],
         type: "foreign key",
-        name: "applicationId_foreignkey",
+        name: "apkFiles_foreignkey_appId",
         references: {
           table: "applications",
           field: "id",
         },
         onDelete: "cascade",
         onUpdate: "cascade",
+        transaction,
       });
+
+      await queryInterface.addConstraint("apkFiles", {
+        fields: ["versionId"],
+        type: "foreign key",
+        name: "apkFiles_foreignkey_versionId",
+        references: {
+          table: "versions",
+          field: "id",
+        },
+        onDelete: "cascade",
+        onUpdate: "cascade",
+        transaction,
+      });
+
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
@@ -55,19 +54,13 @@ export default {
   async down(queryInterface: QueryInterface, DataType: typeof DataTypes) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.removeConstraint(
-        "installedApps",
-        "unique_user_app_pair",
-        {
-          transaction,
-        }
-      );
-
-      //previous constraint
-      await queryInterface.addConstraint("installedApps", {
-        fields: ["userId", "applicationId"],
+      await queryInterface.removeConstraint("apkFiles", "unique_apkFiles", {
+        transaction,
+      });
+      await queryInterface.addConstraint("apkFiles", {
+        fields: ["appId", "versionId"],
         type: "unique",
-        name: "unique_user_app_pair",
+        name: "unique_apkFiles",
         transaction,
       });
       await transaction.commit();

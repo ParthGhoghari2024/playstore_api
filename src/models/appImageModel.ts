@@ -15,7 +15,6 @@ import {
   Unique,
   UpdatedAt,
 } from "sequelize-typescript";
-import Role from "./roleModel";
 import Application from "./applicationModel";
 
 export interface IAppImagesAttributes {

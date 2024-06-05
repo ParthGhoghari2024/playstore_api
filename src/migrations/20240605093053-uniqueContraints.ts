@@ -4,47 +4,63 @@ export default {
   async up(queryInterface: QueryInterface, DataType: typeof DataTypes) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.removeConstraint(
+      await queryInterface.addIndex(
         "installedApps",
-        "userId_foreignkey",
-        { transaction }
-      );
-      await queryInterface.removeConstraint(
-        "installedApps",
-        "applicationId_foreignkey",
-        { transaction }
-      );
-      await queryInterface.removeConstraint(
-        "installedApps",
-        "unique_user_app_pair",
+        ["userId", "applicationId"],
         {
+          unique: true,
+          name: "uniqueInstalledApps",
+          where: {
+            deletedAt: null,
+          },
           transaction,
         }
       );
+      await queryInterface.removeConstraint("ratings", "foreignkey_userId", {
+        transaction,
+      });
+      await queryInterface.removeConstraint("ratings", "foreignkey_appId", {
+        transaction,
+      });
 
-      await queryInterface.addConstraint("installedApps", {
+      await queryInterface.removeConstraint("ratings", "unique_user_app_pair", {
+        transaction,
+      });
+
+      await queryInterface.addConstraint("ratings", {
         fields: ["userId"],
         type: "foreign key",
-        name: "userId_foreignkey",
+        name: "foreignkey_userId",
         references: {
           table: "users",
           field: "id",
         },
         onDelete: "cascade",
         onUpdate: "cascade",
+        transaction,
       });
 
-      await queryInterface.addConstraint("installedApps", {
-        fields: ["applicationId"],
+      await queryInterface.addConstraint("ratings", {
+        fields: ["appId"],
         type: "foreign key",
-        name: "applicationId_foreignkey",
+        name: "foreignkey_appId",
         references: {
           table: "applications",
           field: "id",
         },
         onDelete: "cascade",
         onUpdate: "cascade",
+        transaction,
       });
+      await queryInterface.addIndex("ratings", ["userId", "appId"], {
+        unique: true,
+        name: "uniqueRatings",
+        where: {
+          deletedAt: null,
+        },
+        transaction,
+      });
+
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
@@ -55,21 +71,13 @@ export default {
   async down(queryInterface: QueryInterface, DataType: typeof DataTypes) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.removeConstraint(
-        "installedApps",
-        "unique_user_app_pair",
-        {
-          transaction,
-        }
-      );
-
-      //previous constraint
-      await queryInterface.addConstraint("installedApps", {
-        fields: ["userId", "applicationId"],
-        type: "unique",
-        name: "unique_user_app_pair",
+      await queryInterface.removeIndex("installedApps", "uniqueInstalledApps", {
         transaction,
       });
+      await queryInterface.removeIndex("ratings", "uniqueRatings", {
+        transaction,
+      });
+
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();

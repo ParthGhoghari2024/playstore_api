@@ -29,13 +29,6 @@ interface IUserCreationAttributes
   extends Optional<IInstalledAttributes, "id"> {}
 @Table({
   tableName: "installedApps",
-  indexes: [
-    {
-      name: "unique_user_app_pair",
-      unique: true,
-      fields: ["userId", "applicationId"],
-    },
-  ],
 })
 class InstalledApp extends Model<
   IInstalledAttributes,

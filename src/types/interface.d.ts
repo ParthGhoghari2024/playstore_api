@@ -1,11 +1,21 @@
 export interface IId {
   id: number;
 }
-
-export interface INameEmailCountry {
+export interface IEmailPassword {
+  email: string;
+  password: string;
+}
+export interface createUserBody {
   name: string;
   email: string;
+  password: string;
   country?: string;
+}
+export interface IJwtPayload {
+  userId: number;
+  name: string;
+  email: string;
+  roleId: number;
 }
 export interface IReqFiles {
   [fieldname: string]: Express.Multer.File[];
@@ -48,4 +58,11 @@ export interface IPermissionObj {
 export interface IReducedPermission {
   versionId: number;
   permission: IPermissionObj[];
+}
+
+export interface ILoginRes {
+  name: string;
+  email: string;
+  token: string;
+  redirectLocation: string;
 }

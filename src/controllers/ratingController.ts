@@ -28,7 +28,7 @@ const createRatingController = async (
 
     const appExists: Application | null = await getAppIdIfExists(appId);
     if (!appExists) {
-      res.json({ success: 0, error: "Invalid App id" });
+      res.json({ success: 0, error: "Invalid App id", invalidApp: true });
       return;
     }
 
@@ -40,10 +40,25 @@ const createRatingController = async (
     if (!isAppInstalledResult || !isAppInstalledResult) {
       res.json({
         success: 0,
-        error: { message: "User haven't installed app", id: "notInstalledApp" },
+        error: { message: "User haven't installed app", notInstalledApp: true },
       });
       return;
     }
+
+    const ratingExists: Rating | null = await getRatingIdIfExistsByAppId(
+      appId,
+      userId
+    );
+
+    if (ratingExists && ratingExists.id) {
+      res.json({
+        success: 0,
+        error: "Duplicate rating",
+        duplicateRating: true,
+      });
+      return;
+    }
+
     const newRating: IRatingAttributes = {
       appId: appId,
       rating: rating,
@@ -77,7 +92,7 @@ const getRatingsByAppIdController = async (
 
     const getResult: Rating[] | undefined = await getRatingsByAppId(appId);
 
-    const reducedResult = getResult?.reduce(
+    const reducedResult: IReducedRating | undefined = getResult?.reduce(
       (prev: IReducedRating, cur: Rating) => {
         prev.ratings.push({
           comment: cur.comment,
@@ -93,7 +108,7 @@ const getRatingsByAppIdController = async (
       }
     );
 
-    if (getResult) res.json({ success: 1, result: reducedResult });
+    if (reducedResult) res.json({ success: 1, result: reducedResult });
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
@@ -119,15 +134,16 @@ const editRatingController = async (
       return;
     }
 
-    const isAppInstalledResult: boolean | null = await isAppInstalled(
+    const ratingExists: Rating | null = await getRatingIdIfExistsByAppId(
       appId,
       userId
     );
 
-    if (!isAppInstalledResult || !isAppInstalledResult) {
+    if (!ratingExists || !ratingExists.id) {
       res.json({
         success: 0,
-        error: { message: "User haven't installed app", id: "notInstalledApp" },
+        error: "No rating exists",
+        noRatingExists: true,
       });
       return;
     }
@@ -166,7 +182,11 @@ const deleteRatingController = async (
       userId
     );
     if (!ratingExists || !ratingExists.id) {
-      res.json({ success: 0, error: "No rating to delete" });
+      res.json({
+        success: 0,
+        error: "No rating to delete",
+        noRatingExists: true,
+      });
       return;
     }
 

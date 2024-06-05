@@ -10,6 +10,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+import passport from "passport";
+import { passportAuth } from "./middlewares/auth";
+passportAuth(passport);
+
 import cors from "cors";
 const corsOptions: ICorsOptions = {
   origin: [],
@@ -24,6 +28,7 @@ import db from "./models";
 db.sequelize.authenticate().then(() => {
   console.log("db connected");
 });
+import authRoute from "./routes/authRoute";
 import userRoute from "./routes/userRoutes";
 import categoryRoute from "./routes/categoryRoutes";
 import genreRoute from "./routes/genreRoutes";
@@ -36,6 +41,7 @@ import ratingRoute from "./routes/ratingRoutes";
 import apkFileRoute from "./routes/apkFileRoute";
 import { ICorsOptions } from "./types/config";
 
+app.use("/", authRoute);
 app.use("/user", userRoute);
 app.use("/category", categoryRoute);
 app.use("/genre", genreRoute);

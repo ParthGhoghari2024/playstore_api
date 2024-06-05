@@ -236,7 +236,10 @@ const getApplicationsByDeveloperController = async (
   }
 };
 
-const searchApplicationController = async (req: Request, res: Response) => {
+const searchApplicationController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const appQuery: string = req.query.app as string;
 

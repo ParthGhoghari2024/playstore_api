@@ -16,6 +16,7 @@
   "dependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.11",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -24,6 +25,8 @@
     "joi": "^17.13.1",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "pino": "^9.0.0",
     "pino-pretty": "^11.0.0",
     "rimraf": "^5.0.7",
@@ -32,9 +35,11 @@
     "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/multer": "^1.4.11",
+    "@types/passport-jwt": "^4.0.1",
     "@types/sequelize": "^4.28.20",
     "nodemon": "^3.1.0",
     "sequelize-cli": "^6.6.2",

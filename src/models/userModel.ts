@@ -7,6 +7,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  Default,
   DeletedAt,
   ForeignKey,
   HasMany,
@@ -21,17 +22,23 @@ import Application from "./applicationModel";
 import InstalledApp from "./installedAppModel";
 import Country from "./countryModel";
 import Rating from "./ratingModel";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
+const salt: number = Number(process.env.SALT);
 
 export interface IUserAttributes {
   id?: number;
   name: string;
   email: string;
   roleId: number;
+  password?: string;
   countryId?: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
+const hashedDefaultPw: string = bcrypt.hashSync("12345678", salt);
 
 interface IUserCreationAttributes extends Optional<IUserAttributes, "id"> {}
 @Table({ tableName: "users" })
@@ -52,6 +59,11 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   email!: string;
 
   @AllowNull(false)
+  @Default(hashedDefaultPw)
+  @Column({ type: DataType.STRING(255) })
+  password!: string;
+
+  @AllowNull(false)
   @ForeignKey(() => Role)
   @Column({ type: DataType.INTEGER })
   roleId!: number;
@@ -67,7 +79,7 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> {
   updatedAt?: Date;
   @DeletedAt
   deletedAt?: Date;
-  
+
   @HasMany(() => Application, "developerId")
   application!: Application[];
 

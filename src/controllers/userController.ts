@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import User, { IUserAttributes } from "../models/userModel";
 import { logger } from "../utils/pino";
-import { INameEmailCountry, IUpdateUserBody } from "../types/interface";
+import { createUserBody, IUpdateUserBody } from "../types/interface";
 import {
   deleteUser,
   getAllUser,
@@ -11,6 +11,7 @@ import {
   updateUser,
 } from "../services/userService";
 import { getCounryIdIfExists } from "../services/countryServices";
+import bcrypt from "bcrypt";
 
 interface IError extends Error {
   parent: {
@@ -42,9 +43,11 @@ const createUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    let { name, email, country }: INameEmailCountry = req.body;
+    let { name, email, country, password }: createUserBody = req.body;
     name = name.trim();
     email = email.trim();
+    password = password.trim();
+
     const roleId: number = 1; //TODO:
 
     let countryId: number | undefined = 1; //default country
@@ -56,12 +59,16 @@ const createUserController = async (
       res.json({ success: 0, error: "No country found" });
       return;
     }
+    const salt: number = Number(process.env.SALT);
+
+    const hashedPw: string = bcrypt.hashSync(password, salt);
 
     const newUser: IUserAttributes = {
       name: name,
       email: email,
       roleId: roleId,
       countryId: countryId,
+      password: hashedPw,
     };
 
     const insertResult: User | undefined = await insertUser(newUser);
