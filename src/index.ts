@@ -19,6 +19,7 @@ const corsOptions: ICorsOptions = {
   origin: [],
 };
 app.use(cors(corsOptions));
+import path from "path";
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));

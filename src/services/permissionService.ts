@@ -2,11 +2,18 @@ import { Op } from "sequelize";
 import db from "../models";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
 import { logger } from "../utils/pino";
+import Version from "../models/versionModel";
 
-const getAllPermission = async (): Promise<Permission[] | undefined> => {
+const getAllPermissionGroupVersion = async (): Promise<
+  Version[] | undefined
+> => {
   try {
-    return await db.Permission.findAll({
-      attributes: ["id", "name", "versionId", "description"],
+    return await db.Version.findAll({
+      attributes: ["id", "version", "description"],
+      include: {
+        model: db.Permission,
+        attributes: ["id", "name", "description"],
+      },
     });
   } catch (error) {
     logger.error(error);
@@ -173,7 +180,7 @@ const getPermissionIdIfExists = async (
   }
 };
 export {
-  getAllPermission,
+  getAllPermissionGroupVersion,
   insertPermission,
   updatePermission,
   deletePermission,

@@ -64,7 +64,7 @@ const uploadApkFileController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 

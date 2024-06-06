@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import User, { IUserAttributes } from "../models/userModel";
 import { logger } from "../utils/pino";
-import { createUserBody, IUpdateUserBody } from "../types/interface";
+import { ICreateUserBody, IUpdateUserBody } from "../types/interface";
 import {
   deleteUser,
   getAllUser,
@@ -43,7 +43,7 @@ const createUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    let { name, email, country, password }: createUserBody = req.body;
+    let { name, email, country, password }: ICreateUserBody = req.body;
     name = name.trim();
     email = email.trim();
     password = password.trim();
@@ -77,7 +77,7 @@ const createUserController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -116,7 +116,7 @@ const updateUserController = async (
     else res.json({ succss: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -142,7 +142,7 @@ const deleteUserController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 export {

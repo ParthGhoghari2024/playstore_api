@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as Joi from "joi";
+import Joi from "joi";
 import { logger } from "../utils/pino";
+import { sendJoiErrorResonse } from "../utils/responseHandler";
 const insertRatingSchema: Joi.ObjectSchema = Joi.object({
   appId: Joi.number().required(),
   comment: Joi.string().trim().optional(),
@@ -20,7 +21,7 @@ const createRatingMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -48,7 +49,8 @@ const updateRatingMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
+
       return;
     }
     next();

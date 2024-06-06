@@ -32,7 +32,7 @@ const getAllApplicationController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -78,7 +78,7 @@ const createApplicationController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -112,8 +112,6 @@ const editApplicationController = async (
       return;
     }
 
-    console.log(genreId);
-
     const newApplication: IApplicationAttributes = {
       developerId: developerId,
     };
@@ -132,7 +130,7 @@ const editApplicationController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -156,7 +154,7 @@ const getApplicationByIdController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -181,7 +179,7 @@ const deleteApplicationController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -204,7 +202,7 @@ const getApplicationByGenreController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -232,7 +230,7 @@ const getApplicationsByDeveloperController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -258,7 +256,7 @@ const searchApplicationController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -289,7 +287,7 @@ const getCountOfApplicationByCategoryController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 

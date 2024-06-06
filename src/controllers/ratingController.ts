@@ -8,7 +8,6 @@ import {
 import Rating, { IRatingAttributes } from "../models/ratingModel";
 import {
   deleteRating,
-  getRatingIdIfExists,
   getRatingIdIfExistsByAppId,
   getRatingsByAppId,
   insertRating,
@@ -74,7 +73,7 @@ const createRatingController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -112,7 +111,7 @@ const getRatingsByAppIdController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -161,7 +160,7 @@ const editRatingController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -197,6 +196,7 @@ const deleteRatingController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
+    res.sendStatus(500);
   }
 };
 

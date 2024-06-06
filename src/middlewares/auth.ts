@@ -8,12 +8,10 @@ import passportJwt, { WithSecretOrKey } from "passport-jwt";
 // const JwtStrategy = require("passport-jwt").Strategy;
 const JwtStrategy = passportJwt.Strategy;
 
-// const ExtractJwt = require("passport-jwt").ExtractJwt;
 const ExtractJwt = passportJwt.ExtractJwt;
 import { PassportStatic } from "passport";
 import { getUserbyId } from "../services/userService";
 import User from "../models/userModel";
-import { error } from "console";
 
 const getToken = (req: Request): string | null => {
   const token: string | undefined =

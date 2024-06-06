@@ -4,7 +4,7 @@ import { IAppIdVersionId, IPermissionReqBody } from "../types/permission";
 import Permission, { IPermissionAttributes } from "../models/permissionModel";
 import {
   deletePermission,
-  getAllPermission,
+  getAllPermissionGroupVersion,
   getApplicationPermissions,
   getPermissionById,
   getPermissionIdIfExists,
@@ -13,57 +13,20 @@ import {
   insertPermission,
   updatePermission,
 } from "../services/permissionService";
-import { IReducedPermission } from "../types/interface";
+import Version from "../models/versionModel";
 const getAllPermissionController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const allPermissions: Permission[] | undefined = await getAllPermission();
+    const allPermissions: Version[] | undefined =
+      await getAllPermissionGroupVersion();
 
-    /*
-      {
-        versionId : 1
-        permission:{
-          id,name,description
-        }
-      },
-      {
-
-      }..
-    */
-
-    const reducedPermissions = allPermissions?.reduce(
-      (prev: IReducedPermission[], cur: Permission) => {
-        const index = prev.findIndex((ele) => ele.versionId === cur.versionId);
-        if (index === -1) {
-          prev.push({
-            versionId: cur.versionId,
-            permission: [
-              {
-                id: cur.id,
-                name: cur.name,
-                description: cur.description,
-              },
-            ],
-          });
-        } else {
-          prev[index].permission.push({
-            id: cur.id,
-            name: cur.name,
-            description: cur.description,
-          });
-        }
-        return prev;
-      },
-      []
-    );
-
-    if (allPermissions) res.json({ success: 1, result: reducedPermissions });
+    if (allPermissions) res.json({ success: 1, result: allPermissions });
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -90,7 +53,7 @@ const createPermissionController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -130,7 +93,7 @@ const editPermissionController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 const deletePermissionController = async (
@@ -157,7 +120,7 @@ const deletePermissionController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 const getPermissionByIdConroller = async (
@@ -176,7 +139,7 @@ const getPermissionByIdConroller = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -198,7 +161,7 @@ const getPermissionsByVersionController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -220,7 +183,7 @@ const getApplicationPermissionsController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -241,7 +204,7 @@ const getPermissionsTillVersionController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 export {

@@ -40,7 +40,7 @@ const uploadAppImageController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -63,7 +63,7 @@ const getAppImagesByAppIdController = async (
     else res.json({ succss: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as Joi from "joi";
+import Joi from "joi";
 import { logger } from "../utils/pino";
-import db from "../models";
+import { sendJoiErrorResonse } from "../utils/responseHandler";
 
 const createPermissionSchema: Joi.ObjectSchema = Joi.object({
   name: Joi.string().trim().required().max(255),
@@ -20,7 +20,7 @@ const createPermissionMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -47,7 +47,8 @@ const editPermissionMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
+
       return;
     }
     next();
@@ -71,7 +72,8 @@ const deletePermissionMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
+
       return;
     }
     next();

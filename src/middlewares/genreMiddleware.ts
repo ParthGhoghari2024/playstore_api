@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as Joi from "joi";
+import Joi from "joi";
 import { logger } from "../utils/pino";
+import { sendJoiErrorResonse } from "../utils/responseHandler";
 
 const createGenreSchema: Joi.ObjectSchema = Joi.object({
   genre: Joi.string().trim().required().max(255),
@@ -20,7 +21,7 @@ const createGenreMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -48,7 +49,7 @@ const editGenreMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -74,7 +75,7 @@ const deleteGenreMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();

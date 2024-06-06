@@ -1,10 +1,19 @@
 import { Request, Response } from "express";
-import { IEmailPassword, IJwtPayload, ILoginRes } from "../types/interface";
-import { getUserDataWithPasswordByEmail } from "../services/userService";
+import {
+  ICreateUserBody,
+  IEmailPassword,
+  IJwtPayload,
+  ILoginRes,
+} from "../types/interface";
+import {
+  getUserDataWithPasswordByEmail,
+  insertUser,
+} from "../services/userService";
 import jwt from "jsonwebtoken";
 import { logger } from "../utils/pino";
 import bcrypt from "bcrypt";
-import User from "../models/userModel";
+import User, { IUserAttributes } from "../models/userModel";
+import { getCounryIdIfExists } from "../services/countryServices";
 
 const loginController = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -55,9 +64,55 @@ const loginController = async (req: Request, res: Response): Promise<void> => {
       })
       .json({ success: 1, result: resObj });
   } catch (error) {
-    logger.fatal(error);
-    res.json({ success: 0 });
+    logger.error(error);
+    res.sendStatus(500);
   }
 };
 
-export { loginController };
+const registerController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { name, email, password, country }: ICreateUserBody = req.body;
+
+    const emailExists = await getUserDataWithPasswordByEmail(email);
+
+    if (emailExists && emailExists.id) {
+      res.json({ success: 0, error: "Duplicate email", duplicateEmail: 1 });
+      return;
+    }
+
+    const SALT: number = Number(process.env.SALT);
+    const hashedpassword = bcrypt.hashSync(password, SALT);
+
+    const roleId: number = 1;
+    let countryId: number | undefined = 1;
+    if (country) {
+      countryId = await getCounryIdIfExists(country!);
+
+      if (country && !countryId) {
+        res.json({ success: 0, erorr: "No country found ", countryError: 1 });
+        return;
+      }
+    }
+
+    const newUser: IUserAttributes = {
+      roleId,
+      name,
+      email,
+      password: hashedpassword,
+      countryId,
+    };
+
+    const insertResult: User | undefined = await insertUser(newUser);
+
+    if (insertResult) res.json({ success: 1 });
+    else res.json({ success: 0 });
+  } catch (error) {
+    logger.error(error);
+    res.sendStatus(500);
+  }
+};
+
+export { loginController, registerController };

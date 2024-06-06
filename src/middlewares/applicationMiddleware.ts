@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as Joi from "joi";
+import Joi from "joi";
 import { logger } from "../utils/pino";
+import { sendJoiErrorResonse } from "../utils/responseHandler";
 
 const createApplicationSchema: Joi.ObjectSchema = Joi.object({
   name: Joi.string().trim().required(),
@@ -20,7 +21,7 @@ const createApplicationMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -48,7 +49,7 @@ const editApplicationMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -72,7 +73,7 @@ const deleteApplicationMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();

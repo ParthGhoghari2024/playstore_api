@@ -31,7 +31,7 @@ const createCategoryController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 const getAllCategoryController = async (
@@ -45,7 +45,7 @@ const getAllCategoryController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -65,7 +65,7 @@ const getCategoryByIdController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -96,7 +96,7 @@ const editCategoryByIdController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ sucess: 0 });
+    res.sendStatus(500);
   }
 };
 
@@ -124,7 +124,7 @@ const deleteCategoryByIdController = async (
     else res.json({ success: 0 });
   } catch (error) {
     logger.error(error);
-    res.json({ success: 0 });
+    res.sendStatus(500);
   }
 };
 export {

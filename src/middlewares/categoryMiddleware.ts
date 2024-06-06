@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as Joi from "joi";
+import Joi from "joi";
 import { logger } from "../utils/pino";
+import { sendJoiErrorResonse } from "../utils/responseHandler";
 
 const createCategorySchema: Joi.ObjectSchema = Joi.object({
   category: Joi.string().trim().required().max(255),
@@ -17,7 +18,7 @@ const createCategoryMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -45,7 +46,7 @@ const editCategoryMiddleware = async (
     );
 
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -69,7 +70,7 @@ const deleteCategoryMiddleware = async (
         abortEarly: false,
       });
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();

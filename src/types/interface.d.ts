@@ -5,7 +5,7 @@ export interface IEmailPassword {
   email: string;
   password: string;
 }
-export interface createUserBody {
+export interface ICreateUserBody {
   name: string;
   email: string;
   password: string;

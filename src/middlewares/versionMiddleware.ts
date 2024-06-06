@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import * as Joi from "joi";
+import Joi from "joi";
 import { logger } from "../utils/pino";
+import { sendJoiErrorResonse } from "../utils/responseHandler";
 
 const createVersionSchema: Joi.ObjectSchema = Joi.object({
   applicationId: Joi.number().required(),
@@ -21,7 +22,7 @@ const createVersionMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -50,7 +51,7 @@ const editVersionMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();
@@ -76,7 +77,7 @@ const deleteVersionMiddleware = async (
       }
     );
     if (error) {
-      res.json({ success: 0, error: error?.details });
+      sendJoiErrorResonse(error, res);
       return;
     }
     next();

@@ -4,12 +4,17 @@ import { logger } from "../utils/pino";
 import { sendJoiErrorResonse } from "../utils/responseHandler";
 const userSignupSchema: Joi.ObjectSchema = Joi.object({
   name: Joi.string().trim().required().max(255),
-  email: Joi.string().trim().email().required().max(255),
+  email: Joi.string()
+    .trim()
+    .email()
+    .required()
+    .max(255)
+    .message("invalid email"),
   country: Joi.string().trim().max(255).optional(),
   password: Joi.string().trim().required(),
 });
 
-const createUserMiddleware = async (
+const registerUserValidateMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -23,7 +28,6 @@ const createUserMiddleware = async (
     );
     if (error) {
       sendJoiErrorResonse(error, res);
-
       return;
     }
     next();
@@ -32,19 +36,18 @@ const createUserMiddleware = async (
   }
 };
 
-const updateUserSchema: Joi.ObjectSchema = Joi.object({
-  id: Joi.number().required(),
-  name: Joi.string().trim().optional().max(255),
-  country: Joi.string().trim().max(255).optional(),
+const userLoginSchema: Joi.ObjectSchema = Joi.object({
+  email: Joi.string().trim().email().required().max(255),
+  password: Joi.string().trim().required(),
 });
 
-const updateUserMiddleware = async (
+const loginUserValidateMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { error, value }: Joi.ValidationResult = updateUserSchema.validate(
+    const { error, value }: Joi.ValidationResult = userLoginSchema.validate(
       req.body,
       {
         abortEarly: false,
@@ -52,7 +55,6 @@ const updateUserMiddleware = async (
     );
     if (error) {
       sendJoiErrorResonse(error, res);
-
       return;
     }
     next();
@@ -60,30 +62,4 @@ const updateUserMiddleware = async (
     logger.error(error);
   }
 };
-const userDeleteSchema: Joi.ObjectSchema = Joi.object({
-  id: Joi.number().required(),
-});
-
-const deleteUserMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { error, value }: Joi.ValidationResult = userDeleteSchema.validate(
-      req.body,
-      {
-        abortEarly: false,
-      }
-    );
-    if (error) {
-      sendJoiErrorResonse(error, res);
-
-      return;
-    }
-    next();
-  } catch (error) {
-    logger.error(error);
-  }
-};
-export { createUserMiddleware, deleteUserMiddleware, updateUserMiddleware };
+export { registerUserValidateMiddleware, loginUserValidateMiddleware };
